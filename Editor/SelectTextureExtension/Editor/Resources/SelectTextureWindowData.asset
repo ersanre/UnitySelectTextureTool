@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d92e01882e9145658ec2a8f80ee2fb82, type: 3}
+  m_Name: SelectTextureWindowData
+  m_EditorClassIdentifier: 
+  TextureSize: 82
+  NowMaterial: {fileID: 2100000, guid: 4872f73b3be270c4492c24131c7a31d8, type: 2}
+  NowTextruePropertyName: _MainTex
+  Paths:
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Common/Clamp
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Common/Lightning
+  - Assets
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Common/Special
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Common/Smoke
+  - Assets/YaoZiTools/Editor/Test
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Editor/Resources
+  - Assets/YaoZiTools/Editor/SelectTextureExtension/Common/Fire
+  Names:
+  - Clamp
+  - Lightning
+  - Assets
+  - Special
+  - Smoke
+  - Test
+  - Resources
+  - Fire
+  Materials: []
+  SeachString:
+  - ps
+  - HD
+  WindowBackgroundColor: {r: 1, g: 0, b: 0, a: 0}
+  WindowBackgroundTexture: {fileID: 0}
+  SelectColor: {r: 1, g: 0.8764001, b: 0, a: 1}

@@ -1,0 +1,6 @@
+Editor/SelectTextureExtension/Common/
+*.mat
+*.meta
+*.unity
+Test/
+Editor/CopyMaterialExtension
