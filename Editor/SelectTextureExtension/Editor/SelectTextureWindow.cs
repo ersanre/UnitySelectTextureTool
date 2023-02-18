@@ -500,68 +500,68 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             #endregion
 
             #region 三个按钮
-            var toolRect = new Rect(5, 40, position.width, 20);
-            GUILayout.BeginArea(toolRect);
-            GUILayout.BeginHorizontal();
+            // var toolRect = new Rect(5, 40, position.width, 20);
+            // GUILayout.BeginArea(toolRect);
+            // GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("SD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            {
-                for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-                {
-                    if (MyData.TextureSizeTypes.Keys.ToArray()[i] <= 128)
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-                    }
-                    else
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-                    }
+            // if (GUILayout.Button("SD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
+            // {
+            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
+            //     {
+            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] <= 128)
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
+            //         }
+            //         else
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
+            //         }
 
-                }
-                SizeFilterPopupWindow.IsAllIsFalse = false;
-                RefreshFilter();
-            };
-            if (GUILayout.Button("HD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            {
-                for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-                {
-                    if (MyData.TextureSizeTypes.Keys.ToArray()[i] == 256)
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-                    }
-                    else
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-                    }
+            //     }
+            //     SizeFilterPopupWindow.IsAllIsFalse = false;
+            //     RefreshFilter();
+            // };
+            // if (GUILayout.Button("HD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
+            // {
+            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
+            //     {
+            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] == 256)
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
+            //         }
+            //         else
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
+            //         }
 
-                }
-                SizeFilterPopupWindow.IsAllIsFalse = false;
-                RefreshFilter();
-            };
-            if (GUILayout.Button("FHD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            {
-                for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-                {
-                    if (MyData.TextureSizeTypes.Keys.ToArray()[i] > 256)
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-                    }
-                    else
-                    {
-                        MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-                    }
+            //     }
+            //     SizeFilterPopupWindow.IsAllIsFalse = false;
+            //     RefreshFilter();
+            // };
+            // if (GUILayout.Button("FHD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
+            // {
+            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
+            //     {
+            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] > 256)
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
+            //         }
+            //         else
+            //         {
+            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
+            //         }
 
-                }
-                SizeFilterPopupWindow.IsAllIsFalse = false;
-                RefreshFilter();
-            };
-            //GUILayout.Space(50);
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
+            //     }
+            //     SizeFilterPopupWindow.IsAllIsFalse = false;
+            //     RefreshFilter();
+            // };
+            // //GUILayout.Space(50);
+            // GUILayout.EndHorizontal();
+            // GUILayout.EndArea();
             #endregion
             #region 贴图区域
 
-            var tRecta = new Rect(2, 60, position.width - 2, position.height - 80);
+            var tRecta = new Rect(2, 40, position.width - 2, position.height - 60);
 
             // tRecta.MinHeight(MyData.TextureSize);
             // tRecta.MinWidth(MyData.TextureSize);
