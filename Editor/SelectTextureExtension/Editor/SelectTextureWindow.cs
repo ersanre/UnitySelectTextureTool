@@ -108,8 +108,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             this.titleContent =
                 new GUIContent("Select Texture", Resources.Load<Texture2D>("SelectTextureWindowIcon"));
             // LoadRect();
-            if (MyData.Names.Count != 0 || MyData.Names.Count == DrawTextures.Count)
+            if (MyData.Names.Count != 0 || MyData.Names.Count != DrawTextures.Count)
             {
+                DrawTextures.Clear();
                 ToolbarRects = new Rect[MyData.Names.Count]; //?
 
                 for (int i = 0; i < MyData.Names.Count; i++)
