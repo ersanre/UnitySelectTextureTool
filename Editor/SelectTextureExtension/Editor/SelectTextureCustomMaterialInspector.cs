@@ -10,7 +10,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
     [CustomEditor(typeof(Material))]
-    public class SelectTextureCustomMaterialInspector : CopyMaterial.Editor.CustomMaterialInspector
+    public class SelectTextureCustomMaterialInspector : MaterialEditor
     {
         Object texture;
       //  private List<Texture> Texture2Ds = new List<Texture>();
