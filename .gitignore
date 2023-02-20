@@ -3,4 +3,6 @@ Editor/SelectTextureExtension/Common/
 *.meta
 *.unity
 Test/
+Test
 Editor/CopyMaterialExtension
+*.assset
