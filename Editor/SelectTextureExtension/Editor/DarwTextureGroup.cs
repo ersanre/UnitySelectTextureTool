@@ -36,7 +36,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         private string Path;
 
-        public  bool IsLoad;
+        public bool IsLoad;
 
 
         // private bool[] isSelection;
@@ -65,9 +65,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             //Load();
 
 
-             getTextureList = new GetTextureList();
+            getTextureList = new GetTextureList();
             //getTextureList.DrawTextureGroup = this;
-            
+
             mEditorStyles = new GUIStyle("TimeScrubberButton");
             SelectTextureWindow.skin.customStyles[0].fixedWidth = SelectTextureWindow.MyData.TextureSize;
             SelectTextureWindow.skin.customStyles[0].fixedHeight = SelectTextureWindow.MyData.TextureSize;
@@ -76,16 +76,16 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             NowTextureBoxs = getTextureList.TextureBoxs;
             //  Bg = SelectTextureWindow.MyData.WindowBackgroundTexture;
-           // IsLoad = true;
-            
+            // IsLoad = true;
+
         }
 
 
         public void Draw(Rect TexturesRect)
         {
-           // TexturesRect.y -= 40; //??????????????
-           // TexturesRect.x -= 2; //??????????????
-                                 // GUI.color =SelectTextureWindow.MyData.WindowBackgroundColor;
+            // TexturesRect.y -= 40; //??????????????
+            // TexturesRect.x -= 2; //??????????????
+            // GUI.color =SelectTextureWindow.MyData.WindowBackgroundColor;
             var e = Event.current;
             if (SelectTextureWindow.MyData.WindowBackgroundTexture != null)
             {
@@ -99,11 +99,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             darwHeight = Mathf.CeilToInt(((float)nowLength) / cunstomWidth); //真实绘制行数
 
-            
-            cunstomWidth = Mathf.FloorToInt((TexturesRect.width-15) /
+
+            cunstomWidth = Mathf.FloorToInt((TexturesRect.width - 15) /
                                            SelectTextureWindow.MyData
                                                .TextureSize); //一行多少个 -1 可以让左右的滑动条不出现，不会出现多渲染的情况  取整有可能是0
-           SelectTextureWindow.skin.customStyles[0].margin.left=(int) (((TexturesRect.width-15)%SelectTextureWindow.MyData.TextureSize)/cunstomWidth);
+            SelectTextureWindow.skin.customStyles[0].margin.left = (int)(((TexturesRect.width - 15) % SelectTextureWindow.MyData.TextureSize) / cunstomWidth);
             // SelectTextureWindow.skin.customStyles[0].fixedWidth=SelectTextureWindow.skin.customStyles[0].fixedHeight;
 
             cunstomHeight = Mathf.CeilToInt(TexturesRect.height / SelectTextureWindow.MyData.TextureSize) >
@@ -118,8 +118,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 (darwHeight + 1) * SelectTextureWindow.MyData.TextureSize);
             ScrollViewValue = GUI.BeginScrollView(TexturesRect, ScrollViewValue, BigRect);
 
-           // var tRect = GUILayoutUtility.GetRect(1, ScrollViewValue.y); //空的
-           var tRect = GUILayoutUtility.GetRect(1,((int) (ScrollViewValue.y/SelectTextureWindow.MyData.TextureSize)*SelectTextureWindow.MyData.TextureSize)); //空的
+            // var tRect = GUILayoutUtility.GetRect(1, ScrollViewValue.y); //空的
+            var tRect = GUILayoutUtility.GetRect(1, ((int)(ScrollViewValue.y / SelectTextureWindow.MyData.TextureSize) * SelectTextureWindow.MyData.TextureSize)); //空的
 
             start = Mathf.FloorToInt(ScrollViewValue.y / SelectTextureWindow.MyData.TextureSize) *
                     cunstomWidth; //开始渲染索引,确保是整数*每行个数
@@ -238,7 +238,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             GUILayout.EndVertical();
             //框
-            if (TexturesRect.Contains(e.mousePosition - ScrollViewValue)&&EditorWindow.focusedWindow.ToString().Contains("SelectTextureWindow"))
+            if (TexturesRect.Contains(e.mousePosition - ScrollViewValue) && EditorWindow.focusedWindow.ToString().Contains("SelectTextureWindow"))
             {
                 DarwLine(mouseRect, 4f, new Color(0, 0.6f, 1, 0.7f));
             }
@@ -255,13 +255,13 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
             // getTextureList = new GetTextureList();
             //getTextureList.DrawTextureGroup = this;
-            if (getTextureList.textrueArrayLength!=this.NowTextureBoxs.Count||getTextureList.textrueArrayLength==0)
+            if (getTextureList.textrueArrayLength != this.NowTextureBoxs.Count || getTextureList.textrueArrayLength == 0)
             {
             }
-                 EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
-           
+            EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
 
-           
+
+
 
             // mEditorStyles = new GUIStyle("TimeScrubberButton");
             // SelectTextureWindow.skin.customStyles[0].fixedWidth = SelectTextureWindow.MyData.TextureSize;
