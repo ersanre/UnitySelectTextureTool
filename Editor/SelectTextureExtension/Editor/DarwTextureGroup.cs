@@ -153,7 +153,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
                     IsSelectionChange = getTextureList.isSelect[i];
 
-                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], NowTextureBoxs[i].Texture, SelectTextureWindow.skin.customStyles[0]);
+                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(getTextureList.GUIDString[i])), SelectTextureWindow.skin.customStyles[0]);
 
                     var lRect = GUILayoutUtility.GetLastRect();
 
@@ -257,8 +257,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             //getTextureList.DrawTextureGroup = this;
             if (getTextureList.textrueArrayLength != this.NowTextureBoxs.Count || getTextureList.textrueArrayLength == 0)
             {
+                 EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
             }
-            EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
+
 
 
 
