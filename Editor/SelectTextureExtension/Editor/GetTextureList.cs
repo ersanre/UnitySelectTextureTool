@@ -47,88 +47,89 @@ public class GetTextureList
         GUIDString=guid.ToList<string>();
         textrueArrayLength = guid.Length;
          //确定长度
+         // yield return 0;
         if (TextureBoxs.Count==textrueArrayLength)
         {
             yield return 0;
         }
 
-       // Debug.Log("获取全部Texture的GUID耗时:" + sw.Elapsed); //很快
-    //     sw.Restart();
-    //     //alltextures.Clear();
-    //     //isSelect.Clear();
-    //    // TextureWrapMode.Clear();
-    //     for (int i = LodIndex; i < guid.Length; i++)
-    //     {
-    //         var texture = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(guid[i]));
-    //         var maxSize = texture.width > texture.height ? texture.width : texture.height;
-    //         if (!TextureWrapMode.Contains(texture.wrapMode))
-    //         {
-    //             TextureWrapMode.Add(texture.wrapMode); //自己的贴图组的模式表
-    //         }
+       Debug.Log("获取全部Texture的GUID耗时:" + sw.Elapsed); //很快
+        sw.Restart();
+        //alltextures.Clear();
+        //isSelect.Clear();
+       // TextureWrapMode.Clear();
+        for (int i = LodIndex; i < guid.Length; i++)
+        {
+            // var texture = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(guid[i]));
+            // var maxSize = texture.width > texture.height ? texture.width : texture.height;
+            // if (!TextureWrapMode.Contains(texture.wrapMode))
+            // {
+            //     TextureWrapMode.Add(texture.wrapMode); //自己的贴图组的模式表
+            // }
 
-    //         if (!TextureSize.Contains(maxSize)) //自己的贴图组的Size表
-    //         {
-    //            // TextureSize.Add(maxSize);
-    //             var b = false;
+            // if (!TextureSize.Contains(maxSize)) //自己的贴图组的Size表
+            // {
+            //    // TextureSize.Add(maxSize);
+            //     var b = false;
                 
-    //             for (int j = 0; j < TextureSize.Count; j++) //排序小到大
-    //             {
-    //                 if (maxSize < TextureSize[j])
-    //                 {
-    //                     TextureSize.Insert(j, maxSize);
-    //                     b = true;
-    //                     break;
-    //                 }
-    //             }
+            //     for (int j = 0; j < TextureSize.Count; j++) //排序小到大
+            //     {
+            //         if (maxSize < TextureSize[j])
+            //         {
+            //             TextureSize.Insert(j, maxSize);
+            //             b = true;
+            //             break;
+            //         }
+            //     }
                 
-    //             if (!b)
-    //             {
-    //                 TextureSize.Add(maxSize);
-    //             }
-    //         }
+            //     if (!b)
+            //     {
+            //         TextureSize.Add(maxSize);
+            //     }
+            // }
 
-    //         if (SelectTextureWindow.MyData.TextureSizeTypes == null)
-    //         {
-    //             SelectTextureWindow.MyData.TextureSizeTypes = new Dictionary<int, bool>();
-    //         }
+            // if (SelectTextureWindow.MyData.TextureSizeTypes == null)
+            // {
+            //     SelectTextureWindow.MyData.TextureSizeTypes = new Dictionary<int, bool>();
+            // }
 
-    //         if (SelectTextureWindow.MyData.TextureWrapModes == null)
-    //         {
-    //             SelectTextureWindow.MyData.TextureWrapModes = new Dictionary<TextureWrapMode, bool>();
-    //         }
+            // if (SelectTextureWindow.MyData.TextureWrapModes == null)
+            // {
+            //     SelectTextureWindow.MyData.TextureWrapModes = new Dictionary<TextureWrapMode, bool>();
+            // }
 
-    //         if (!SelectTextureWindow.MyData.TextureSizeTypes.ContainsKey(maxSize))
-    //         {
-    //             SelectTextureWindow.MyData.TextureSizeTypes.Add(maxSize, false);
-    //             //SelectTextureWindow.MyData.TextureSizeTypes.OrderBy((p => p.Key));
-    //         }
+            // if (!SelectTextureWindow.MyData.TextureSizeTypes.ContainsKey(maxSize))
+            // {
+            //     SelectTextureWindow.MyData.TextureSizeTypes.Add(maxSize, false);
+            //     //SelectTextureWindow.MyData.TextureSizeTypes.OrderBy((p => p.Key));
+            // }
 
-    //         if (!SelectTextureWindow.MyData.TextureWrapModes.ContainsKey(texture.wrapMode))
-    //         {
-    //             SelectTextureWindow.MyData.TextureWrapModes.Add(texture.wrapMode, false);
-    //         }
+            // if (!SelectTextureWindow.MyData.TextureWrapModes.ContainsKey(texture.wrapMode))
+            // {
+            //     SelectTextureWindow.MyData.TextureWrapModes.Add(texture.wrapMode, false);
+            // }
             
-    //         TextureBoxs.Add(new TextureBoxs()
-    //         {
-    //             Texture = texture, //贴图
-    //             TimeInfo = new FileInfo(AssetDatabase.GUIDToAssetPath(guid[i])).LastWriteTime
-    //         });
-    //         LodIndex++;
+            // TextureBoxs.Add(new TextureBoxs()
+            // {
+            //     Texture = texture, //贴图
+            //     TimeInfo = new FileInfo(AssetDatabase.GUIDToAssetPath(guid[i])).LastWriteTime
+            // });
+            LodIndex++;
            
-    //         isSelect.Add(false);
-    //         if (i % 60 == 0&&i!=0) //加载300个每帧
-    //         {
-    //             //Debug.Log(path+" : " + i);
-    //            SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
-    //             yield return null;
-    //         }
+            isSelect.Add(false);
+            if (i % 60 == 0&&i!=0) //加载300个每帧
+            {
+                //Debug.Log(path+" : " + i);
+               SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
+                yield return null;
+            }
 
 
             
-    //     }
+        }
          IsGetOver=true;
-    //     SelectTextureWindow.RefreshFilter();
-    //     Debug.Log("加载图片耗时：" + sw.Elapsed); //耗时12
+        SelectTextureWindow.RefreshFilter();
+        Debug.Log("加载图片耗时：" + sw.Elapsed); //耗时12
     }
 
 

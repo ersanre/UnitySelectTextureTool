@@ -1,4 +1,5 @@
 
+using System.Security.Principal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public Dictionary<int, bool> SelectIsSizType = new Dictionary<int, bool>();
         public Dictionary<TextureWrapMode, bool> SelectIsTextureWrapMode = new Dictionary<TextureWrapMode, bool>();
 
+        private Texture[] TempTexture;
+        private int tempInt;
+
         public DrawTextureGroup(string path)
         {
             Path = path;
@@ -95,7 +99,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             EditorGUI.DrawRect(TexturesRect, SelectTextureWindow.MyData.WindowBackgroundColor);
 
             //没筛选时用最开始获得的长度，筛选时用实时长度， 这样刚打开滚动条不会 随着图片加载缩短
-            var nowLength = NowTextureBoxs.Count == getTextureList.textrueArrayLength ? getTextureList.textrueArrayLength : NowTextureBoxs.Count;
+            var nowLength = NowTextureBoxs.Count == getTextureList.textrueArrayLength ? NowTextureBoxs.Count : getTextureList.textrueArrayLength;
 
             darwHeight = Mathf.CeilToInt(((float)nowLength) / cunstomWidth); //真实绘制行数
 
@@ -129,6 +133,13 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
             //Debug.Log(EditorWindow.focusedWindow== );
+            if (start + end != tempInt)
+            {
+                TempTexture = new Texture[cunstomWidth * cunstomHeight];
+
+            }
+
+
 
             GUILayout.BeginVertical();
 
@@ -151,9 +162,16 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                     // var r = GUILayoutUtility.GetRect(SelectTextureWindow.MyData.TextureSize,
                     //     SelectTextureWindow.MyData.TextureSize);
 
-                    IsSelectionChange = getTextureList.isSelect[i];
+                    // IsSelectionChange = getTextureList.isSelect[i];
+                    if (start + end != tempInt)
+                    {
+                        TempTexture[i - start] = (AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(getTextureList.GUIDString[i])));
+                    }
 
-                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(getTextureList.GUIDString[i])), SelectTextureWindow.skin.customStyles[0]);
+
+
+
+                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], TempTexture[i - start], SelectTextureWindow.skin.customStyles[0]);
 
                     var lRect = GUILayoutUtility.GetLastRect();
 
@@ -235,7 +253,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
                 GUILayout.EndHorizontal();
             }
-
+            tempInt = start + end;
             GUILayout.EndVertical();
             //框
             if (TexturesRect.Contains(e.mousePosition - ScrollViewValue) && EditorWindow.focusedWindow.ToString().Contains("SelectTextureWindow"))
@@ -257,7 +275,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             //getTextureList.DrawTextureGroup = this;
             if (getTextureList.textrueArrayLength != this.NowTextureBoxs.Count || getTextureList.textrueArrayLength == 0)
             {
-                 EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
+                EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
             }
 
 
