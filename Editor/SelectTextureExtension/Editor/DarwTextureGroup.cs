@@ -257,8 +257,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             //getTextureList.DrawTextureGroup = this;
             if (getTextureList.textrueArrayLength != this.NowTextureBoxs.Count || getTextureList.textrueArrayLength == 0)
             {
+                 EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
             }
-            EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
+           
 
 
 

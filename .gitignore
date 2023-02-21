@@ -6,3 +6,5 @@ Test/
 Test
 Editor/CopyMaterialExtension
 *.assset
+Editor/.gitignore
+Editor/README.md
