@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CopyMaterial.Editor;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -10,7 +11,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
     [CustomEditor(typeof(Material))]
-    public class SelectTextureCustomMaterialInspector : MaterialEditor
+    public class SelectTextureCustomMaterialInspector : CustomMaterialInspector
     {
         Object texture;
       //  private List<Texture> Texture2Ds = new List<Texture>();
@@ -92,7 +93,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
            {
               if (ShaderUtil.GetPropertyType(Material.shader,i)==ShaderUtil.ShaderPropertyType.TexEnv)
               {
-                
+
                 TexturNames.Add(ShaderUtil.GetPropertyName(Material.shader,i));
                 TexturDescription.Add(ShaderUtil.GetPropertyDescription(Material.shader,i));
               }

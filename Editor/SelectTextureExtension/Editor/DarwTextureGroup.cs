@@ -133,7 +133,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
             //Debug.Log(EditorWindow.focusedWindow== );
-            if (start + end != tempInt)
+            if (true)
             {
                 TempTexture = new Texture[cunstomWidth * cunstomHeight];
 
@@ -142,12 +142,12 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
             GUILayout.BeginVertical();
-
+            var num = 0;
             for (int i = start; i < end; i += 0)
             {
                 GUILayout.BeginHorizontal();
 
-                for (int j = 0; j < cunstomWidth; j++) //渲染横向图片
+                for (int j = 0; j < cunstomWidth;) //渲染横向图片
                 {
                     if (i >= nowLength)
                     {
@@ -163,15 +163,22 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                     //     SelectTextureWindow.MyData.TextureSize);
 
                     // IsSelectionChange = getTextureList.isSelect[i];
-                    if (start + end != tempInt)
+                    if (true)
                     {
-                        TempTexture[i - start] = (AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(getTextureList.GUIDString[i])));
+                        var tempTexture = (AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(getTextureList.GUIDString[i])));
+                        if (!tempTexture.name.ToUpper().Contains("PS"))
+                        {
+                            end++;
+                            i++;
+                            num++;
+                            continue;
+                        }
+
+                        TempTexture[i - num] = tempTexture;
+
                     }
-
-
-
-
-                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], TempTexture[i - start], SelectTextureWindow.skin.customStyles[0]);
+                    j++;
+                    getTextureList.isSelect[i] = GUILayout.Toggle(getTextureList.isSelect[i], TempTexture[i - num], SelectTextureWindow.skin.customStyles[0]);
 
                     var lRect = GUILayoutUtility.GetLastRect();
 
@@ -249,6 +256,15 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
 
                     i++;
+                }
+                if (i >= nowLength)
+                {
+                    break;
+                    // GUI.Label(
+                    //     GUILayoutUtility.GetRect(SelectTextureWindow.MyData.TextureSize,
+                    //         SelectTextureWindow.MyData.TextureSize), "");
+                    // i++;
+                    // continue;
                 }
 
                 GUILayout.EndHorizontal();

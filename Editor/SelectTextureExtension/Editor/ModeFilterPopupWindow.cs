@@ -6,24 +6,24 @@ using UnityEngine;
 
 namespace YaoZiTools.SelectTextureExtension.Editor
 {
-    public class ModeFilterPopupWindow:PopupWindowContent 
+    public class ModeFilterPopupWindow : PopupWindowContent
     {
         public float mRectX;
         public TextureGroupBox mTextureGroupBox;
         private bool ToggleValue;
         private int SelectSize;
-      
+
         public static bool IsAllIsFalse;
         public List<TextureWrapMode> TextureWrapMode = new List<TextureWrapMode>();
-        
+
         public override void OnGUI(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
             GUILayout.BeginVertical();
-   
+
             for (int i = 0; i < TextureWrapMode.Count; i++)
             {
-                SelectTextureWindow.MyData.TextureWrapModes[TextureWrapMode[i]]=  GUILayout.Toggle(  SelectTextureWindow.MyData.TextureWrapModes[TextureWrapMode[i]],TextureWrapMode[i].ToString());
+                SelectTextureWindow.MyData.TextureWrapModes[TextureWrapMode[i]] = GUILayout.Toggle(SelectTextureWindow.MyData.TextureWrapModes[TextureWrapMode[i]], TextureWrapMode[i].ToString());
             }
             GUILayout.EndVertical();
             if (SelectTextureWindow.MyData.TextureWrapModes.ContainsValue(true))
@@ -42,7 +42,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         public override Vector2 GetWindowSize()
         {
-            return new Vector2(mRectX,TextureWrapMode.Count*17+5) ;
+            return new Vector2(mRectX, TextureWrapMode.Count * 17 + 5);
         }
     }
 }

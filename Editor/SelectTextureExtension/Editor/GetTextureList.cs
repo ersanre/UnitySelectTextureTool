@@ -31,6 +31,9 @@ public class GetTextureList
     public List<TextureBoxs> TextureBoxs = new List<TextureBoxs>();
 
     public List<string> GUIDString =new List<string>();
+    public List<string> NameString =new List<string>();
+
+
    // public List<TextureBoxs> NowTextureBoxs = new List<TextureBoxs>();
 //   public DrawTextureGroup DrawTextureGroup;
     public int textrueArrayLength;
@@ -60,7 +63,8 @@ public class GetTextureList
        // TextureWrapMode.Clear();
         for (int i = LodIndex; i < guid.Length; i++)
         {
-            // var texture = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(guid[i]));
+         //NameString.Add( Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(GUIDString[i])) ) ;
+           // var texture = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(guid[i]));
             // var maxSize = texture.width > texture.height ? texture.width : texture.height;
             // if (!TextureWrapMode.Contains(texture.wrapMode))
             // {
@@ -112,17 +116,17 @@ public class GetTextureList
             // TextureBoxs.Add(new TextureBoxs()
             // {
             //     Texture = texture, //贴图
-            //     TimeInfo = new FileInfo(AssetDatabase.GUIDToAssetPath(guid[i])).LastWriteTime
+            //     //TimeInfo = new FileInfo(AssetDatabase.GUIDToAssetPath(guid[i])).LastWriteTime
             // });
             LodIndex++;
            
             isSelect.Add(false);
-            if (i % 60 == 0&&i!=0) //加载300个每帧
-            {
-                //Debug.Log(path+" : " + i);
-               SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
-                yield return null;
-            }
+            // if (i % 60 == 0&&i!=0) //加载300个每帧
+            // {
+            //     //Debug.Log(path+" : " + i);
+            //    SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
+            //     yield return null;
+            // }
 
 
             
