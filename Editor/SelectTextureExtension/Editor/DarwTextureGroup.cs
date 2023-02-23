@@ -191,7 +191,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                         }
 
                         //贴图maxsize
-                        GUI.Label(sizeRect, NowTextureBoxs[i].Texture.width > NowTextureBoxs[i].Texture.height ? NowTextureBoxs[i].Texture.width.ToString() : NowTextureBoxs[i].Texture.width.ToString().ToString(), "AssetLabel Partial");
+                        GUI.Label(sizeRect, (NowTextureBoxs[i].Texture.width > NowTextureBoxs[i].Texture.height ? NowTextureBoxs[i].Texture.width : NowTextureBoxs[i].Texture.height).ToString(), "AssetLabel Partial");
 
 
 
@@ -259,10 +259,6 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                  EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
             }
-           
-
-
-
 
             // mEditorStyles = new GUIStyle("TimeScrubberButton");
             // SelectTextureWindow.skin.customStyles[0].fixedWidth = SelectTextureWindow.MyData.TextureSize;

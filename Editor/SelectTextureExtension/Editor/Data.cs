@@ -6,22 +6,22 @@ using UnityEngine;
 
 namespace YaoZiTools.SelectTextureExtension.Editor
 {
-    public  class Data
+    public class Data
     {
-      //  public static  string DataPath ;
+        //  public static  string DataPath ;
         public SelectTextureWindowData SelectTextureWindowData;
         // public Data()
         // {
         //     SelectTextureWindowData =  AssetDatabase.LoadAssetAtPath<SelectTextureWindowData>(DataPath);
         // }
-      
-       
+
+
         /// <summary>
         /// 添加 路径和名字数据
         /// </summary>
         /// <param name="path">文件夹路径</param>
         /// <param name="name">别名</param>
-        public  void SavePathDataInAsset(string path, string name = "null")
+        public void SavePathDataInAsset(string path, string name = "null")
         {
             if (name == "null")//没写名字就读取文件夹的名字
             {
@@ -41,13 +41,14 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             SelectTextureWindowData data = ScriptableObject.CreateInstance<SelectTextureWindowData>();
             data.Names = new List<string>();
             data.Paths = new List<string>();
-            data.SeachString=new List<string>();
+            data.SeachString = new List<string>();
             //data.NowMaterial=material;
-            data.TextureSize = 50f;
+            data.TextureSize = 85f;
             data.Names.Add("Assets");
             data.Paths.Add("Assets");
+            data.WindowBackgroundColor = new Color(0, 0, 0, 0);
 
-            AssetDatabase.CreateAsset(data, dataPath+"/SelectTextureWindowData.asset");
+            AssetDatabase.CreateAsset(data, dataPath + "/SelectTextureWindowData.asset");
             AssetDatabase.Refresh(); //刷新
             return dataPath;
         }
@@ -56,7 +57,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
             var mIcon = Resources.Load<Texture2D>("SelectTextureWindowIcon");
             var dataPath = AssetDatabase.GetAssetPath(mIcon);
-            dataPath= dataPath.Substring(0,dataPath.Length-28);
+            dataPath = dataPath.Substring(0, dataPath.Length - 28);
             return dataPath;
         }
 

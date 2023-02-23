@@ -29,8 +29,8 @@ public class GetTextureList
     public List<TextureWrapMode> TextureWrapMode = new List<TextureWrapMode>(); //模式表不添加重复模式
     public List<int> TextureSize = new List<int>();
     public List<TextureBoxs> TextureBoxs = new List<TextureBoxs>();
-   // public List<TextureBoxs> NowTextureBoxs = new List<TextureBoxs>();
-//   public DrawTextureGroup DrawTextureGroup;
+    // public List<TextureBoxs> NowTextureBoxs = new List<TextureBoxs>();
+    //   public DrawTextureGroup DrawTextureGroup;
     public int textrueArrayLength;
     public bool IsGetOver;
     public int LodIndex;
@@ -43,7 +43,7 @@ public class GetTextureList
         var sw = Stopwatch.StartNew();
         var guid = AssetDatabase.FindAssets("t:Texture", new string[] { path });
         textrueArrayLength = guid.Length; //确定长度
-        if (TextureBoxs.Count==textrueArrayLength)
+        if (TextureBoxs.Count == textrueArrayLength)
         {
             yield return 0;
         }
@@ -52,7 +52,7 @@ public class GetTextureList
         sw.Restart();
         //alltextures.Clear();
         //isSelect.Clear();
-       // TextureWrapMode.Clear();
+        // TextureWrapMode.Clear();
         for (int i = LodIndex; i < guid.Length; i++)
         {
             var texture = AssetDatabase.LoadAssetAtPath<Texture>(AssetDatabase.GUIDToAssetPath(guid[i]));
@@ -64,9 +64,9 @@ public class GetTextureList
 
             if (!TextureSize.Contains(maxSize)) //自己的贴图组的Size表
             {
-               // TextureSize.Add(maxSize);
+                // TextureSize.Add(maxSize);
                 var b = false;
-                
+
                 for (int j = 0; j < TextureSize.Count; j++) //排序小到大
                 {
                     if (maxSize < TextureSize[j])
@@ -76,7 +76,7 @@ public class GetTextureList
                         break;
                     }
                 }
-                
+
                 if (!b)
                 {
                     TextureSize.Add(maxSize);
@@ -103,26 +103,26 @@ public class GetTextureList
             {
                 SelectTextureWindow.MyData.TextureWrapModes.Add(texture.wrapMode, false);
             }
-            
+
             TextureBoxs.Add(new TextureBoxs()
             {
                 Texture = texture, //贴图
                 TimeInfo = new FileInfo(AssetDatabase.GUIDToAssetPath(guid[i])).LastWriteTime
             });
             LodIndex++;
-           
+
             isSelect.Add(false);
-            if (i % 60 == 0&&i!=0) //加载300个每帧
+            if (i % 60 == 0 && i != 0) //加载300个每帧
             {
                 //Debug.Log(path+" : " + i);
-               SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
+                SelectTextureWindow.RefreshFilter();//刷新筛选数据，跑一下筛选 
                 yield return null;
             }
 
 
-            
+
         }
-        IsGetOver=true;
+        IsGetOver = true;
         SelectTextureWindow.RefreshFilter();
         Debug.Log("加载图片耗时：" + sw.Elapsed); //耗时12
     }

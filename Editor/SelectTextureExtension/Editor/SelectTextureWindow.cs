@@ -108,7 +108,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             this.titleContent =
                 new GUIContent("Select Texture", Resources.Load<Texture2D>("SelectTextureWindowIcon"));
             // LoadRect();
-            if (MyData.Names.Count != 0 || MyData.Names.Count != DrawTextures.Count)
+            if (MyData.Names.Count != 0 && MyData.Names.Count != DrawTextures.Count)
             {
                 DrawTextures.Clear();
                 ToolbarRects = new Rect[MyData.Names.Count]; //?
@@ -152,6 +152,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             SortIcon = EditorGUIUtility.IconContent("AlphabeticalSorting");//排序图标
             SortIcon.tooltip = "排序";
+
+            TextureSizeTool.IsSDButtonValue=true;
+            TextureSizeTool.TempInt=0;
 
             // DrawTextures[selectedGroup].Load();
 
@@ -432,8 +435,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                     MyData.TextureWrapModes[MyData.TextureWrapModes.Keys.ToArray()[i]] = false;
                 }
 
-                SizeFilterPopupWindow.IsAllIsFalse = true;
-                ModeFilterPopupWindow.IsAllIsFalse = true;
+                //SizeFilterPopupWindow.IsAllIsFalse = true;
+               // ModeFilterPopupWindow.IsAllIsFalse = true;
                 RefreshFilter();
 
 
@@ -502,63 +505,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             #region 三个按钮
             // var toolRect = new Rect(5, 40, position.width, 20);
-            // GUILayout.BeginArea(toolRect);
-            // GUILayout.BeginHorizontal();
-
-            // if (GUILayout.Button("SD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            // {
-            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-            //     {
-            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] <= 128)
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-            //         }
-            //         else
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-            //         }
-
-            //     }
-            //     SizeFilterPopupWindow.IsAllIsFalse = false;
-            //     RefreshFilter();
-            // };
-            // if (GUILayout.Button("HD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            // {
-            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-            //     {
-            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] == 256)
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-            //         }
-            //         else
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-            //         }
-
-            //     }
-            //     SizeFilterPopupWindow.IsAllIsFalse = false;
-            //     RefreshFilter();
-            // };
-            // if (GUILayout.Button("FHD", GUILayout.ExpandWidth(false), GUILayout.Width(100)))
-            // {
-            //     for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-            //     {
-            //         if (MyData.TextureSizeTypes.Keys.ToArray()[i] > 256)
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = true;
-            //         }
-            //         else
-            //         {
-            //             MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-            //         }
-
-            //     }
-            //     SizeFilterPopupWindow.IsAllIsFalse = false;
-            //     RefreshFilter();
-            // };
-            // //GUILayout.Space(50);
-            // GUILayout.EndHorizontal();
-            // GUILayout.EndArea();
+            // TextureSizeTool.Draw(toolRect);
             #endregion
             #region 贴图区域
 
@@ -647,7 +594,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             #endregion
 
-            var textureInfo=new Rect(tRecta.x,tRecta.yMax-180,tRecta.width,180);
+            var textureInfo = new Rect(tRecta.x, tRecta.yMax - 180, tRecta.width, 180);
 
             // GUILayout.BeginArea(textureInfo,new GUIStyle("box"));
             // {
