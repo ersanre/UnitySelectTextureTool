@@ -95,7 +95,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             EditorGUI.DrawRect(TexturesRect, SelectTextureWindow.MyData.WindowBackgroundColor);
 
             //没筛选时用最开始获得的长度，筛选时用实时长度， 这样刚打开滚动条不会 随着图片加载缩短
-            var nowLength = NowTextureBoxs.Count == getTextureList.textrueArrayLength ? getTextureList.textrueArrayLength : NowTextureBoxs.Count;
+            var nowLength = NowTextureBoxs.Count == getTextureList.TextrueArrayLength ? getTextureList.TextrueArrayLength : NowTextureBoxs.Count;
 
             darwHeight = Mathf.CeilToInt(((float)nowLength) / cunstomWidth); //真实绘制行数
 
@@ -255,7 +255,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
             // getTextureList = new GetTextureList();
             //getTextureList.DrawTextureGroup = this;
-            if (getTextureList.textrueArrayLength != this.NowTextureBoxs.Count || getTextureList.textrueArrayLength == 0)
+            if (getTextureList.TextrueArrayLength != this.NowTextureBoxs.Count || getTextureList.TextrueArrayLength == 0)
             {
                  EditorCoroutineRunner.StartEditorCoroutine(getTextureList.GetAssetTextureInPath(Path));
             }

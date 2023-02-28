@@ -31,9 +31,13 @@ public class GetTextureList
     public List<TextureBoxs> TextureBoxs = new List<TextureBoxs>();
     // public List<TextureBoxs> NowTextureBoxs = new List<TextureBoxs>();
     //   public DrawTextureGroup DrawTextureGroup;
-    public int textrueArrayLength;
+    private int _textrueArrayLength;
+    public int TextrueArrayLength
+    {
+        get{return _textrueArrayLength;}
+    }
     public bool IsGetOver;
-    public int LodIndex;
+    private int LodIndex;
 
 
     public IEnumerator GetAssetTextureInPath(string path, bool isGetDirectory = false)
@@ -42,8 +46,8 @@ public class GetTextureList
 
         var sw = Stopwatch.StartNew();
         var guid = AssetDatabase.FindAssets("t:Texture", new string[] { path });
-        textrueArrayLength = guid.Length; //确定长度
-        if (TextureBoxs.Count == textrueArrayLength)
+        _textrueArrayLength = guid.Length; //确定长度
+        if (TextureBoxs.Count == TextrueArrayLength)
         {
             yield return 0;
         }
@@ -172,12 +176,4 @@ public class GetTextureList
         return newPahts;
     }
 
-    // static void ReadDirectoryStruct(string[] path)
-    // {
-    //     for (int i = 0; i < path.Length; i++)
-    //     {
-    //          Directory.GetDirectories(path[i]);
-    //     }
-    //     Directory.GetDirectories()
-    // }
 }
