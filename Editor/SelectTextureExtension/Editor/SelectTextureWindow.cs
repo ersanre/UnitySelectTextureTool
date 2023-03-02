@@ -454,21 +454,18 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             SizeToggleValue = GUI.Toggle(SizeToggleRect, false, "MaxSize", "ToolbarDropDownToggle");
             if (SizeToggleValue)
             {
-                PopupWindow.Show(SizeToggleRect, new SizeFilterPopupWindow()
-                {
-                    mRectX = SizeToggleRect.width,
-                    TextureSize = DrawTextures[selectedGroup].getTextureList.TextureSize,
-                });
+                PopupWindow.Show(SizeToggleRect, new SizeFilterPopupWindow<int>(DrawTextures[selectedGroup].getTextureList.TextureSize,SizeToggleRect.width));
             }
 
             wrapModeToggleValue = GUI.Toggle(wrapModeToggleRect, false, "Mode", "ToolbarDropDownToggle");
             if (wrapModeToggleValue)
             {
-                PopupWindow.Show(wrapModeToggleRect, new ModeFilterPopupWindow()
-                {
-                    mRectX = wrapModeToggleRect.width,
-                    TextureWrapMode = DrawTextures[selectedGroup].getTextureList.TextureWrapMode,
-                });
+                // PopupWindow.Show(wrapModeToggleRect, new ModeFilterPopupWindow()
+                // {
+                //     mRectX = wrapModeToggleRect.width,
+                //     TextureWrapMode = DrawTextures[selectedGroup].getTextureList.TextureWrapMode,
+                // });
+                 PopupWindow.Show(wrapModeToggleRect, new SizeFilterPopupWindow<TextureWrapMode>(DrawTextures[selectedGroup].getTextureList.TextureWrapMode,wrapModeToggleRect.width));
             }
 
             // EditorGUI.DropdownButton(SizeToggleRect, new GUIContent("啥啊"), FocusType.Keyboard);
@@ -660,8 +657,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 MyData.NowTextruePropertyName = PropertyName;
             }
 
-            ModeFilterPopupWindow.IsAllIsFalse = true;
-            SizeFilterPopupWindow.IsAllIsFalse = true;
+           ModeFilterPopupWindow.IsAllIsFalse = true;
+            SizeFilterPopupWindow<int>.IsAllIsFalse = true;
         }
 
         // void EditorWindow(int ID)
@@ -764,11 +761,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public static void TextureSizeFilter(DrawTextureGroup drawTextureGroup)
         {
 
-            drawTextureGroup.NowTextureBoxs = SizeFilterPopupWindow.IsAllIsFalse
+            drawTextureGroup.NowTextureBoxs = SizeFilterPopupWindow<int>.IsAllIsFalse
                 ? drawTextureGroup.NowTextureBoxs
                 : drawTextureGroup.NowTextureBoxs.Where((boxs =>
                 {
-                    return SelectTextureWindow.MyData.TextureSizeTypes[
+                    return SizeFilterPopupWindow<int>.PropetrtSelect[
                         boxs.Texture.height > boxs.Texture.width ? boxs.Texture.height : boxs.Texture.width];
                 })).ToList();
         }
@@ -778,7 +775,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 ? drawTextureGroup.NowTextureBoxs
                 : drawTextureGroup.NowTextureBoxs.Where((boxs =>
                 {
-                    return SelectTextureWindow.MyData.TextureWrapModes[boxs.Texture.wrapMode];
+                    return SizeFilterPopupWindow<TextureWrapMode>.PropetrtSelect[boxs.Texture.wrapMode];
                 }))).ToList();
         }
         public static void TexturesousuoFilter(DrawTextureGroup drawTextureGroup)

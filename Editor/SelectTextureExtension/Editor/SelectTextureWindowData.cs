@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace YaoZiTools.SelectTextureExtension.Editor
 {
-    public  class SelectTextureWindowData:ScriptableObject
+    public class SelectTextureWindowData : ScriptableObject
     {
         public float TextureSize;
         public Material NowMaterial;
@@ -15,10 +15,10 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public Dictionary<int, bool> TextureSizeTypes;
         public Dictionary<TextureWrapMode, bool> TextureWrapModes;
         public List<string> SeachString;
-        public Color WindowBackgroundColor =Color.black;
-        public Texture WindowBackgroundTexture ;
-        public Color SelectColor =Color.yellow;
-       
+        public Color WindowBackgroundColor = Color.black;
+        public Texture WindowBackgroundTexture;
+        public Color SelectColor = Color.yellow;
+
     }
-    
+
 }

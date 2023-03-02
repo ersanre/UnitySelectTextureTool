@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -6,38 +7,40 @@ using UnityEngine;
 
 namespace YaoZiTools.SelectTextureExtension.Editor
 {
-    public class SizeFilterPopupWindow : PopupWindowContent
+    //提供一个 按照索引选取，和条件选取的方法
+    public class SizeFilterPopupWindow<T> : PopupWindowContent
     {
-        public float mRectX;
-        public TextureGroupBox mTextureGroupBox;
-        private bool ToggleValue;
-        private int SelectSize;
-        // public event Action<int> SelectSizeTypeEvent;
+        private float mRectX;
 
-        public static bool IsAllIsFalse;
+        public static bool IsAllIsFalse
+        {
+            set
+            {
+                if (value)
+                {
+                    PropetrtSelect = PropetrtSelect.ToDictionary(k => k.Key, v => false);
+                }
 
-        public List<int> TextureSize = new List<int>();
+            }
+            get { return PropetrtSelect.ContainsValue(true) ? false : true; }
+        }
+
+        public List<T> Property = new List<T>();
+        public static Dictionary<T, bool> PropetrtSelect = new Dictionary<T, bool>();
 
         public override void OnGUI(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
             GUILayout.BeginVertical();
-            for (int i = 0; i < TextureSize.Count; i++)
+            for (int i = 0; i < Property.Count; i++)
             {
 
-                SelectTextureWindow.MyData.TextureSizeTypes[TextureSize[i]] = GUILayout.Toggle(SelectTextureWindow.MyData.TextureSizeTypes[TextureSize[i]], TextureSize[i].ToString());
+                PropetrtSelect[Property[i]] = GUILayout.Toggle(PropetrtSelect[Property[i]], Property[i].ToString());
 
             }
 
             // SelectTextureWindow.MyData.TextureSizeTypes.Values.All(p => p);
-            if (SelectTextureWindow.MyData.TextureSizeTypes.ContainsValue(true))
-            {
-                IsAllIsFalse = false;
-            }
-            else
-            {
-                IsAllIsFalse = true;
-            }
+
             GUILayout.EndVertical();
             if (EditorGUI.EndChangeCheck())
             {
@@ -45,10 +48,32 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             }
 
         }
+        /// <summary>
+        /// toggle组弹出窗口构造函数
+        /// </summary>
+        /// <param name="t">显示的内容list表</param>
+        /// <param name="windowWidht">窗口的宽度</param>
+        public SizeFilterPopupWindow(List<T> t, float windowWidht)
+        {
+            mRectX = windowWidht;
+            Property = t;
+            for (int i = 0; i < t.Count; i++)
+            {
+                //不包含才会加进字典
+                if (!PropetrtSelect.ContainsKey(t[i]))
+                {
+                    PropetrtSelect.Add(t[i], false);
+                }
+            }
+
+            //list不包含key时将value设为false
+            PropetrtSelect = PropetrtSelect.ToDictionary(k => k.Key, v => t.Contains(v.Key) ? v.Value : false);
+
+        }
 
         public override Vector2 GetWindowSize()
         {
-            return new Vector2(mRectX, TextureSize.Count * 17 + 5);
+            return new Vector2(mRectX, Property.Count * 17 + 5);
         }
     }
 }
