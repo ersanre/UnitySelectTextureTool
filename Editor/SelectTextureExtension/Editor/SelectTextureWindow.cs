@@ -745,7 +745,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             DrawTextures[selectedGroup].NowTextureBoxs = DrawTextures[selectedGroup].getTextureList.TextureBoxs;
             TextureSizeFilter(DrawTextures[selectedGroup]);
             TextureWrapModesFilter(DrawTextures[selectedGroup]);
-            TexturesousuoFilter(DrawTextures[selectedGroup]);
+            TextureSearchFilter(DrawTextures[selectedGroup]);
             if (IsSort)
             {
                 TextureSort(DrawTextures[selectedGroup]);
@@ -756,7 +756,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             drawTextureGroup.NowTextureBoxs = drawTextureGroup.getTextureList.TextureBoxs;
             TextureSizeFilter(drawTextureGroup);
             TextureWrapModesFilter(drawTextureGroup);
-            TexturesousuoFilter(drawTextureGroup);
+            TextureSearchFilter(drawTextureGroup);
         }
         public static void TextureSizeFilter(DrawTextureGroup drawTextureGroup)
         {
@@ -765,7 +765,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 ? drawTextureGroup.NowTextureBoxs
                 : drawTextureGroup.NowTextureBoxs.Where((boxs =>
                 {
-                    return SizeFilterPopupWindow<int>.PropetrtSelect[
+                    return SizeFilterPopupWindow<int>.PropetrtySelect[
                         boxs.Texture.height > boxs.Texture.width ? boxs.Texture.height : boxs.Texture.width];
                 })).ToList();
         }
@@ -775,10 +775,10 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 ? drawTextureGroup.NowTextureBoxs
                 : drawTextureGroup.NowTextureBoxs.Where((boxs =>
                 {
-                    return SizeFilterPopupWindow<TextureWrapMode>.PropetrtSelect[boxs.Texture.wrapMode];
+                    return SizeFilterPopupWindow<TextureWrapMode>.PropetrtySelect[boxs.Texture.wrapMode];
                 }))).ToList();
         }
-        public static void TexturesousuoFilter(DrawTextureGroup drawTextureGroup)
+        public static void TextureSearchFilter(DrawTextureGroup drawTextureGroup)
         {
             drawTextureGroup.NowTextureBoxs = string.IsNullOrEmpty(SeachString) ? drawTextureGroup.NowTextureBoxs : drawTextureGroup.NowTextureBoxs.Where((boxs =>
             {

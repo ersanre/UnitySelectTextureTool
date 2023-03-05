@@ -61,7 +61,6 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 SelectTextureWindow.SaveData();
             }
-            
         }
         void OnLostFocus()
         {
