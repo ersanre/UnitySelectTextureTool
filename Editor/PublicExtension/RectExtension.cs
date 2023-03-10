@@ -35,10 +35,10 @@ namespace EditorFramework
             switch (anchorType)
             {
                 case AnchorType.MiddleCenter:
-                    r = self.CutLeft(-pixel * 0.5f)
-                        .CutRigth(-pixel * 0.5f)
-                        .CutTop(-pixel * 0.5f)
-                        .CutBottom(-pixel * 0.5f);
+                    r = self.CutLeft((-pixel) * 0.5f)
+                        .CutRigth((-pixel) * 0.5f)
+                        .CutTop((-pixel )* 0.5f)
+                        .CutBottom((-pixel) * 0.5f);
 
                     break;
             }
@@ -55,11 +55,11 @@ namespace EditorFramework
         {
             if (splitType == SplitType.Vertical)
             {
-                return new Rect(rects[0].xMax, rects[0].yMin, rects[1].xMin - rects[0].xMax, rects[0].height);
+                 return new Rect(rects[0].xMin, rects[0].yMax, rects[0].width, rects[1].yMin - rects[0].yMax);
             }
             else
             {
-                return new Rect(rects[0].xMin, rects[0].yMax, rects[0].width, rects[1].yMin - rects[0].yMax);
+                return new Rect(rects[0].xMax, rects[0].yMin, rects[1].xMin-rects[0].xMax, rects[0].height );
             }
         }
 
@@ -124,18 +124,14 @@ namespace EditorFramework
         /// <param name="padding"></param>两个块之间的间隙
         /// <param name="justMid"></param>是否居中
         /// <returns></returns>返回两个块
-        public static Rect[] VerticalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
+        public static Rect[] HorizontalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
         {
             if (justMid)
             {
                 return new Rect[2]
                 {
-                    //??
-                    //self.CutRigth(self.width-width).CutRigth(padding).CutRigth(Mathf.CeilToInt(padding/2f)),
-                    // self.CutLeft(width).CutLeft(padding).CutLeft(-Mathf.CeilToInt(padding/2f))
                     self.CutRigth(self.width - size + padding * 0.5f),
                     self.CutLeft(size + padding * 0.5f),
-                    //new Rect(width-padding*0.5f,self.y,padding,self.height)
                 };
             }
 
@@ -154,18 +150,14 @@ namespace EditorFramework
         /// <param name="padding"></param>两个块之间的间隙
         /// <param name="justMid"></param>是否居中
         /// <returns></returns>返回两个块
-        public static Rect[] HorizontalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
+        public static Rect[] VerticalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
         {
             if (justMid)
             {
                 return new Rect[2]
                 {
-                    //??
-                    //self.CutRigth(self.width-width).CutRigth(padding).CutRigth(Mathf.CeilToInt(padding/2f)),
-                    // self.CutLeft(width).CutLeft(padding).CutLeft(-Mathf.CeilToInt(padding/2f))
                     self.CutBottom(self.height - size + padding * 0.5f),
                     self.CutTop(size + padding * 0.5f),
-                    //new Rect(width-padding*0.5f,self.y,padding,self.height)
                 };
             }
 

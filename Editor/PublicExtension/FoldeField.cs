@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EditorFramework.Editor
 {
-    public class FoldeField:GUIBase
+    public class FoldeField : GUIBase
     {
         protected override void OnDispose()
         {
@@ -25,7 +25,7 @@ namespace EditorFramework.Editor
         {
             set
             {
-                if (value=="Asset")
+                if (value == "Asset")
                 {
                     mFolder = Application.dataPath;
                 }
@@ -41,16 +41,16 @@ namespace EditorFramework.Editor
         }
         protected string mTitle;
         protected string mDefaultName;
-        public FoldeField(string path ="可以将文件夹拖到这里",string folder ="Asset",string title ="请选择文件夹",string defaultName ="")
+        public FoldeField(string path = "可以将文件夹拖到这里", string folder = "Asset", string title = "请选择文件夹", string defaultName = "")
         {
-            mPath = path; 
+            mPath = path;
             Folder = folder;
             mTitle = title;
             mDefaultName = defaultName;
         }
         public override void OnGUI(Rect position)
         {
-            var mRects = position.VerticalSplit(position.width - 30,5);
+            var mRects = position.VerticalSplit(position.width - 30, 5);
 
             Rect leftRect = mRects[0];
             Rect rightRect = mRects[1];
@@ -59,17 +59,17 @@ namespace EditorFramework.Editor
 
             var currentGUIEnabled = GUI.enabled;//缓存原来的状态
             GUI.enabled = false;
-           Path= GUI.TextField(leftRect,mPath);
+            Path = GUI.TextField(leftRect, mPath);
             GUI.enabled = currentGUIEnabled;//还原原来的状态
-            
-            if (GUI.Button(rightRect,GUIContents.Folder))
+
+            if (GUI.Button(rightRect, GUIContents.Folder))
             {
                 //打开一个文件夹选择对话框
                 var path = EditorUtility.OpenFolderPanel(mTitle, mFolder, mDefaultName);
                 //将全路径截取为工程内路径
                 if (!string.IsNullOrEmpty(path))
                 {
-                    mPath =path.TryToAssetPath(out IsGetPath);
+                    mPath = path.TryToAssetPath(out IsGetPath);
                 }
                 else
                 {
@@ -78,8 +78,8 @@ namespace EditorFramework.Editor
                 }
             }
             //拖入按钮 识别路径
-            var info= DragAndDropTool.Drag(leftRect);
-            if (info.EnterArea&& !info.Dragging&&info.Complete)
+            var info = DragAndDropTool.Drag(leftRect);
+            if (info.EnterArea && !info.Dragging && info.Complete)
             {
                 if (info.Paths[0].IsDirectory())
                 {
@@ -91,7 +91,7 @@ namespace EditorFramework.Editor
                     mPath = "只能拖入文件夹";
                     IsGetPath = false;
                 }
-                
+
             }
         }
     }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Dynamic;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace YaoZiTools.SelectTextureExtension.Editor
 {
@@ -18,6 +20,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public Color WindowBackgroundColor = Color.black;
         public Texture WindowBackgroundTexture;
         public Color SelectColor = Color.yellow;
+        public float SplitSize=50;
 
     }
 
