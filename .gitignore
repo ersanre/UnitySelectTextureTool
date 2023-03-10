@@ -5,6 +5,7 @@ Editor/SelectTextureExtension/Common/
 Test/
 Test
 Editor/CopyMaterialExtension
+Editor/CopyMaterialTool
 *.assset
 Editor/.gitignore
 Editor/README.md
