@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using CopyMaterial.Editor;
 using UnityEditor;
 using UnityEngine;
 
