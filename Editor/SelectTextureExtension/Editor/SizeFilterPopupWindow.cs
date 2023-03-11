@@ -18,7 +18,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 if (value)
                 {
-                    _propetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => false);
+                    PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => false);
                    // SelectTextureWindow.RefreshFilter();
                 }
 
@@ -70,7 +70,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         /// <param name="multipleSelect">是否支持多选</param>
         public SizeFilterPopupWindow(List<T> t, float windowWidht, bool multipleSelect = false)
         {
-            _propetrtySelect=new Dictionary<T, bool>();
+            PropetrtySelect=new Dictionary<T, bool>();
             MultipleSelect = multipleSelect;
             mRectX = windowWidht;
             Property = t;
@@ -84,7 +84,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             }
 
             //list不包含key时将value设为false
-            _propetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => t.Contains(v.Key) ? v.Value : false);
+            PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => t.Contains(v.Key) ? v.Value : false);
 
         }
 
@@ -106,7 +106,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
             for (int i = 0; i < Key.Count; i++)
             {
-                _propetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key[i]) ? value : v.Value);
+                PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key[i]) ? value : v.Value);
             }
             SelectTextureWindow.RefreshFilter();
         }

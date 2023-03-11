@@ -20,7 +20,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public Color WindowBackgroundColor = Color.black;
         public Texture WindowBackgroundTexture;
         public Color SelectColor = Color.yellow;
-        public float SplitSize=50;
+        public float SplitSize;
 
     }
 

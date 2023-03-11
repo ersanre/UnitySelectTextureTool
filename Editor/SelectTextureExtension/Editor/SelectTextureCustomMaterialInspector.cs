@@ -27,7 +27,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         private static void GetShaderGUI()
         {
             var o = typeof(MaterialEditor);
-           SelectTextureCustomMaterialInspector.MyCustomShaderGUI = o.GetField("m_CustomShaderGUI", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            SelectTextureCustomMaterialInspector.MyCustomShaderGUI = o.GetField("m_CustomShaderGUI", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
         }
         public override void OnEnable()
         {
@@ -39,6 +39,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             LoadTextrueProperty();
 
+
             //Debug.Log(s.va);
             //  var shaderg= new ShaderGUI();
             // var shaderU= typeof(ShaderUtil);
@@ -47,7 +48,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             // Debug.Log(ShaderGUI);
             // var oo = create.Invoke(null,new object[]{"CustomShaderGUI"});
             // ShaderUtil.CreateShaderGUI()
-             SelectTextureCustomMaterialInspector.MyCustomShaderGUI.SetValue(this, ShaderGUI);
+            SelectTextureCustomMaterialInspector.MyCustomShaderGUI.SetValue(this, ShaderGUI);
 
             //     this.ShaderProperty(Material.GetColor("gg"),"ff")
             //    var propertyID=  ShaderUtil.GetPropertyCount(Material.shader);
@@ -68,9 +69,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             // base.TextureProperty(materialProperty,"sgg");
             base.OnInspectorGUI();
             //Material = go;
-            if (TexturNames != null)
+            if (TexturNames != null && this.customShaderGUI != customShaderGUI)
             {
-
+                Debug.Log(this.customShaderGUI);
                 GUILayout.BeginVertical();
                 for (int i = 0; i < TexturNames.Count; i++)
                 {
@@ -84,7 +85,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                         // SelectTextureWindow.TexturPropertyNames.Clear();
                         //  SelectTextureWindow.TexturPropertyNames.AddRange(TexturNames);
                         SelectTextureWindow.Material = Material;
-                      //  ButtomEvent?.Invoke();
+                        //  ButtomEvent?.Invoke();
                         //var MyData = AssetDatabase.LoadAssetAtPath<SelectTextureWindowData>(Data.DataPath);
                         SelectTextureWindow.Open();
                     }

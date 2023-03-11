@@ -102,7 +102,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         //当前材质球
         public Rect MaterailRect { get { return new Rect(position.width - 192, position.height - 18, 140, 20); } }
 
-        private SplitView _splitView;
+        private static SplitView _splitView;
 
 
 
@@ -180,14 +180,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
             DrawTextureGroup.TextrueChange += GetTextureInfo;
 
-            _splitView = new SplitView(SplitType.Vertical);
-            SplitView.SplitSize = MyData.SplitSize;
 
             _splitView.FirstArea += FirstArea;
             _splitView.SecondArea += SecondArea;
 
             _splitView.DrawDragAndDrropRect += DrawDragAndDrropRect;
-
             // DrawTextures[selectedGroup].Load();
 
 
@@ -213,11 +210,17 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
+        public static Texture MaterialTexture;
 
         private void SecondArea(Rect obj)
         {
+
+            var textRectSize = Mathf.Clamp(obj.height, obj.height,200);
             GUILayout.BeginArea(obj);
-            GUILayout.Button(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName), GUILayout.Height(obj.height), GUILayout.Width(obj.height));
+            if (GUILayout.Button(MaterialTexture, GUILayout.Height(textRectSize), GUILayout.Width(textRectSize)))
+            {
+                EditorGUIUtility.PingObject(MaterialTexture);
+            }
             GUILayout.EndArea();
             GUILayout.BeginArea(InfoRect);
             {
@@ -229,15 +232,12 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                     GUILayout.Label(TexturePathInfo, "PR DisabledLabel");
                     if (!string.IsNullOrEmpty(TexturePathInfo))
                     {
-                        if (GUILayout.Button("ping", "AssetLabel Partial"))
-                        {
-                            EditorGUIUtility.PingObject(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-                        }
+
 
                         if (GUILayout.Button("open", "AssetLabel Partial"))
                         {
                             //EditorGUIUtility.PingObject(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-                            AssetDatabase.OpenAsset(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
+                            AssetDatabase.OpenAsset(MaterialTexture);
                         }
                         if (GUILayout.Button("Save", "AssetLabel Partial"))
                         {
@@ -280,6 +280,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         private void GetTextureInfo(TextureBox obj)
         {
             TexturePathInfo = obj.TexturePath;
+
+            MaterialTexture = obj.Texture;
         }
 
         private void OnReSeletcData()
@@ -538,11 +540,6 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             if (GUI.Button(refreshButtonRect, EditorGUIUtility.IconContent("d_Refresh"), "AppToolbarButtonLeft"))//重置筛选条件
             {
                 SetSizeSelectIsFasle();
-                for (int i = 0; i < MyData.TextureWrapModes.Count; i++)
-                {
-                    MyData.TextureWrapModes[MyData.TextureWrapModes.Keys.ToArray()[i]] = false;
-                }
-
                 //SizeFilterPopupWindow.IsAllIsFalse = true;
                 // ModeFilterPopupWindow.IsAllIsFalse = true;
                 RefreshFilter();
@@ -752,6 +749,24 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 MyData.NowTextruePropertyName = PropertyName;
             }
+            if (_splitView == null)
+            {
+                _splitView = new SplitView(SplitType.Vertical);
+            }
+            SplitView.SplitSize = MyData.SplitSize;
+
+            MaterialTexture = MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName);
+            if (MaterialTexture == null)
+            {
+                MaterialTexture = Texture2D.whiteTexture;
+            }
+            if (MaterialTexture != null)
+            {
+                TexturePathInfo = AssetDatabase.GetAssetPath(MaterialTexture);
+            }
+
+
+
         }
 
         // void EditorWindow(int ID)
@@ -923,10 +938,12 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         }
         public static void SetSizeSelectIsFasle()
         {
-            for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-            {
-                MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
-            }
+            // for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
+            SizeFilterPopupWindow<int>.IsAllIsFalse=true;
+            SizeFilterPopupWindow<TextureWrapMode>.IsAllIsFalse=true;
+            // {
+            //     MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
+            // }
         }
         public static void SaveTextureInAssets(TextureBox textureBoxs)
         {
