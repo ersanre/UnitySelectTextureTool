@@ -8,9 +8,9 @@ namespace EditorFramework
     {
         public class DragInof
         {
-            public bool EnterArea;//翻译：输入区域
-            public bool Complete;//翻译：完成
-            public bool Dragging;//翻译：拖拽 
+            public bool EnterArea;//输入区域
+            public bool Complete;//完成
+            public bool Dragging;//拖拽 
             public string[] Paths => DragAndDrop.paths;
             public object[] ObjectReferences => DragAndDrop.objectReferences;
             public DragAndDropVisualMode VisualMode => DragAndDrop.visualMode;

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Reflection;
 using System;
 using System.Collections.Generic;
@@ -20,9 +20,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         private List<string> TexturDescription = new List<string>();
         private Rect ButtonReact;
         private Material Material;
+        private bool IsCustomShaderGUI;
         public static event Action ButtomEvent;
         private ShaderGUI ShaderGUI = Activator.CreateInstance(typeof(CustomShaderGUI)) as ShaderGUI;
         public static FieldInfo MyCustomShaderGUI;
+        private bool IsShaderChange;
         [InitializeOnLoadMethod]
         private static void GetShaderGUI()
         {
@@ -40,6 +42,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             LoadTextrueProperty();
 
 
+
             //Debug.Log(s.va);
             //  var shaderg= new ShaderGUI();
             // var shaderU= typeof(ShaderUtil);
@@ -49,6 +52,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             // var oo = create.Invoke(null,new object[]{"CustomShaderGUI"});
             // ShaderUtil.CreateShaderGUI()
             SelectTextureCustomMaterialInspector.MyCustomShaderGUI.SetValue(this, ShaderGUI);
+            // IsCustomShaderGUI = ;
 
             //     this.ShaderProperty(Material.GetColor("gg"),"ff")
             //    var propertyID=  ShaderUtil.GetPropertyCount(Material.shader);
@@ -62,14 +66,16 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         }
 
-
         public override void OnInspectorGUI()
         {
-            //this.TextureProperty()
-            // base.TextureProperty(materialProperty,"sgg");
+
             base.OnInspectorGUI();
-            //Material = go;
-            if (TexturNames != null && this.customShaderGUI != customShaderGUI)
+
+            if (this.customShaderGUI == null)
+            {
+                SelectTextureCustomMaterialInspector.MyCustomShaderGUI.SetValue(this, ShaderGUI);
+            }
+            if (TexturNames != null && (IsCustomShaderGUI || !this.isVisible))
             {
                 Debug.Log(this.customShaderGUI);
                 GUILayout.BeginVertical();
@@ -107,12 +113,21 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         protected override void OnShaderChanged()
         {
+            base.OnShaderChanged();
+            OnEnable();
+
             // Debug.Log("shader change");
-            LoadTextrueProperty();
+
+            //   LoadTextrueProperty();
+            //  SelectTextureCustomMaterialInspector.MyCustomShaderGUI.SetValue(this, ShaderGUI);
+
+            // IsCustomShaderGUI = this.customShaderGUI.ToString() != "CustomShaderGUI";
             // SelectTextureWindow.TexturPropertyNames.Clear();
             //  SelectTextureWindow.TexturPropertyNames.AddRange(TexturNames); ;
-            SelectTextureWindow.IsSelectTexture = TexturNames.ToDictionary(a => a, b => false);
-            OnInspectorGUI();
+
+            // SelectTextureWindow.IsSelectTexture = TexturNames.ToDictionary(a => a, b => false);
+
+            //  OnInspectorGUI();
         }
 
         void LoadTextrueProperty()

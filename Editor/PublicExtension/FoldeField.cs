@@ -1,4 +1,4 @@
-﻿using Assets.EditorFramework.Editor;
+﻿
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +8,6 @@ namespace EditorFramework.Editor
     {
         protected override void OnDispose()
         {
-            throw new System.NotImplementedException();
         }
 
         protected string mPath;
@@ -50,7 +49,7 @@ namespace EditorFramework.Editor
         }
         public override void OnGUI(Rect position)
         {
-            var mRects = position.VerticalSplit(position.width - 30, 5);
+            var mRects = position.HorizontalSplit(position.width - 30, 5);
 
             Rect leftRect = mRects[0];
             Rect rightRect = mRects[1];

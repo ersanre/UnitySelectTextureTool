@@ -11,7 +11,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
     public class SizeFilterPopupWindow<T> : PopupWindowContent
     {
         private float mRectX;
-
+        public event Action IsToggleChange;
         public static bool IsAllIsFalse
         {
             set
@@ -19,7 +19,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 if (value)
                 {
                     PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => false);
-                   // SelectTextureWindow.RefreshFilter();
+                    // SelectTextureWindow.RefreshFilter();
                 }
 
             }
@@ -29,10 +29,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public List<T> Property = new List<T>();
 
         private static Dictionary<T, bool> _propetrtySelect = new Dictionary<T, bool>();
-        public static Dictionary<T, bool> PropetrtySelect=new Dictionary<T, bool>();
-        // {
-        //     get { return _propetrtySelect; }
-        // }
+        public static Dictionary<T, bool> PropetrtySelect
+        {
+            get { return _propetrtySelect; }
+            private set { _propetrtySelect = value; }
+        }
         private T TempValue;
         public bool MultipleSelect;
 
@@ -58,7 +59,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             GUILayout.EndVertical();
             if (EditorGUI.EndChangeCheck())
             {
-                SelectTextureWindow.RefreshFilter();//刷新筛选
+                IsToggleChange?.Invoke();
             }
 
         }
@@ -70,7 +71,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         /// <param name="multipleSelect">是否支持多选</param>
         public SizeFilterPopupWindow(List<T> t, float windowWidht, bool multipleSelect = false)
         {
-            PropetrtySelect=new Dictionary<T, bool>();
+            // PropetrtySelect = new Dictionary<T, bool>();
             MultipleSelect = multipleSelect;
             mRectX = windowWidht;
             Property = t;
@@ -87,7 +88,6 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => t.Contains(v.Key) ? v.Value : false);
 
         }
-
         public override Vector2 GetWindowSize()
         {
             return new Vector2(mRectX, Property.Count * 17 + 5);
@@ -108,7 +108,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key[i]) ? value : v.Value);
             }
-            SelectTextureWindow.RefreshFilter();
+            IsToggleChange?.Invoke();
         }
         public void SetPropertySelect(Func<List<T>, List<T>> func, bool value)
         {

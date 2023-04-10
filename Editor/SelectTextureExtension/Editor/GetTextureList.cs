@@ -39,7 +39,7 @@ public class GetTextureList
     //public static List<Texture> GetAssetAllTexture()
     // public List<Texture> alltextures = new List<Texture>();
     public List<TextureWrapMode> TextureWrapMode = new List<TextureWrapMode>(); //模式表不添加重复模式
-    public List<int> TextureSize = new List<int>();
+    public List<int> TextureSizeList = new List<int>();
     public List<TextureBox> TextureBoxs = new List<TextureBox>();
     // public List<TextureBoxs> NowTextureBoxs = new List<TextureBoxs>();
     //   public DrawTextureGroup DrawTextureGroup;
@@ -116,16 +116,16 @@ public class GetTextureList
                 TextureWrapMode.Add(texture.wrapMode); //收集贴图组的模式表
             }
 
-            if (!TextureSize.Contains(tempTextureBox.MaxSize)) //收集的贴图组的Size表
+            if (!TextureSizeList.Contains(tempTextureBox.MaxSize)) //收集的贴图组的Size表
             {
                 // TextureSize.Add(maxSize);
                 var b = false;
 
-                for (int j = 0; j < TextureSize.Count; j++) //排序小到大
+                for (int j = 0; j < TextureSizeList.Count; j++) //排序小到大
                 {
-                    if (tempTextureBox.MaxSize < TextureSize[j])
+                    if (tempTextureBox.MaxSize < TextureSizeList[j])
                     {
-                        TextureSize.Insert(j, tempTextureBox.MaxSize);
+                        TextureSizeList.Insert(j, tempTextureBox.MaxSize);
                         b = true;
                         break;
                     }
@@ -133,7 +133,7 @@ public class GetTextureList
 
                 if (!b)
                 {
-                    TextureSize.Add(tempTextureBox.MaxSize);
+                    TextureSizeList.Add(tempTextureBox.MaxSize);
                 }
             }
 

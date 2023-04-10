@@ -1,5 +1,4 @@
 ﻿using System;
-using Assets.EditorFramework.Editor;
 using UnityEditor;
 using UnityEngine;
 using static EditorFramework.RectExtension;
@@ -13,10 +12,11 @@ namespace EditorFramework.Editor
         public event Action<Rect> DrawDragAndDrropRect;
 
         public event Action<Rect> FirstArea, SecondArea;
-        public static float SplitSize ;
+        public static float SplitSize;
         public float MinSplitWidth = 100;
         public float padding = 8;
         private bool mResizing;
+        private AutoFillRect autoFillRect;
         public bool Dragging
         {
             get { return mResizing; }
@@ -48,14 +48,20 @@ namespace EditorFramework.Editor
         /// 传入分割的类型是垂直分割还是水平分割，
         /// </summary>
         /// <param name="splitType"></param>分割类型
-        public SplitView(RectExtension.SplitType splitType)
+        public SplitView(RectExtension.SplitType splitType, AutoFillRect autoFill = AutoFillRect.firstRect)
         {
             mSplitType = splitType;
+            autoFillRect = autoFill;
         }
 
         public override void OnGUI(Rect position)
         {
-            Rect[] rects = position.Split(mSplitType, SplitSize, padding);
+            // if (position.height<=SplitSize+MinSplitWidth)
+            // {
+            //  SplitSize= SplitSize-(SplitSize+MinSplitWidth- position.height);
+            // }
+            var temp = position.height - SplitSize;
+            Rect[] rects = position.Split(mSplitType, SplitSize, padding, true, autoFillRect);
 
             if (FirstArea != null) //绘制里面的内容，绘制方法外面写
             {
@@ -68,11 +74,11 @@ namespace EditorFramework.Editor
             }
 
             var mid = rects.GetMidTowRect(mSplitType);
-            if (DrawDragAndDrropRect!=null)
+            if (DrawDragAndDrropRect != null)
             {
-                  DrawDragAndDrropRect(mid);
+                DrawDragAndDrropRect(mid);
             }
-           // EditorGUI.DrawRect(mid.Zoom(-4, AnchorType.MiddleCenter), Color.green);
+            // EditorGUI.DrawRect(mid.Zoom(-4, AnchorType.MiddleCenter), Color.green);
 
             Event e = Event.current;
 
@@ -103,14 +109,17 @@ namespace EditorFramework.Editor
                     {
                         if (mSplitType == RectExtension.SplitType.Vertical)
                         {
-                            SplitSize += e.delta.y;
+                            SplitSize = autoFillRect == AutoFillRect.firstRect ? SplitSize + e.delta.y : SplitSize - e.delta.y;
+
+                           // SplitSize += e.delta.y;
                             //限制窗口最小
 
-                            SplitSize = Mathf.Clamp(SplitSize, rects[0].yMin + MinSplitWidth, rects[1].yMax - MinSplitWidth);
+                            SplitSize = Mathf.Clamp(SplitSize, 0 + MinSplitWidth,position.height - MinSplitWidth);
                         }
                         else
                         {
-                            SplitSize += e.delta.x;
+                             SplitSize = autoFillRect == AutoFillRect.firstRect ? SplitSize + e.delta.x : SplitSize - e.delta.x;
+                           // SplitSize += e.delta.x;
                             //限制窗口最小
                             SplitSize = Mathf.Clamp(SplitSize, rects[0].xMin + MinSplitWidth, rects[1].xMax - MinSplitWidth);
                         }

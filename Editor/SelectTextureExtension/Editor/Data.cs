@@ -54,10 +54,10 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         public static string GetDataPath()
         {
-            var mIcon = Resources.Load<Texture2D>("SelectTextureWindowIcon");
-            var dataPath = AssetDatabase.GetAssetPath(mIcon);
-            dataPath = dataPath.Substring(0, dataPath.Length - 28);
-            return dataPath;
+
+            var dataPath = AssetDatabase.GetAssetPath(Resources.Load<Texture2D>("SelectTextureWindowIcon"));
+            return Path.GetDirectoryName(dataPath);
+
         }
 
         /// <summary>

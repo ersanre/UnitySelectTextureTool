@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System;
@@ -78,6 +78,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public static string SeachString;
         public static bool IsTextFieldChange;
         private bool IsSelectproperty;
+        /// <summary>
+        /// 贴图路径信息
+        /// </summary>
         public static string TexturePathInfo;
         public static GUISkin skin;
         //搜索
@@ -104,9 +107,15 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         private static SplitView _splitView;
 
-
-
-
+        public static SearchArea MySearchArea;
+        public static MainArea mainArea;
+        public static MainArea FirstLineArea;
+        public static MainArea TextureArea;
+        private static Filter<int> SizeFilter;
+        private static ToolbarArea MyToolbarArea;
+        private static Filter<TextureWrapMode> WrapModeFilter;
+        private static List<TextureTools> TextureToolsList = new List<TextureTools>();
+        public static bool IsChangeMaterialTexture = true;
 
         public static void Open()
         {
@@ -116,6 +125,9 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         private void OnEnable()
         {
+          //  LoadData();
+         //   Debug.Log("加载");
+
             skin = Resources.Load<GUISkin>("mySkin");
             //  kuang = AssetDatabase.LoadAssetAtPath<Texture>("Assets/YaoZiTools/SelectTextureExtension/kuang.png");
             //  LoadData(); //加载配置
@@ -135,7 +147,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 DrawTextures.Clear();
                 ToolbarRects = new Rect[MyData.Names.Count]; //?
 
-                for (int i = 0; i < MyData.Names.Count; i++)
+                for (int i = 0; i < MyData.Paths.Count; i++)
                 {
                     DrawTextures.Add(new DrawTextureGroup(MyData.Paths[i])
                     {
@@ -178,13 +190,56 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             TextureSizeTool.IsSDButtonValue = true;
             TextureSizeTool.TempInt = 0;
 
-            DrawTextureGroup.TextrueChange += GetTextureInfo;
+            DrawTextureGroup.IsTextureChange += SetTextureInMaterial;
 
 
             _splitView.FirstArea += FirstArea;
             _splitView.SecondArea += SecondArea;
 
             _splitView.DrawDragAndDrropRect += DrawDragAndDrropRect;
+
+            mainArea = new MainArea(MainArea.Arrangement.Vertical, "box");
+            FirstLineArea = new MainArea(MainArea.Arrangement.Horizontal, "box") { Rect = new Rect(0, 0, this.position.width, 20) };
+            TextureArea = new MainArea(MainArea.Arrangement.Vertical, "box");
+            FirstLineArea.Rect = new Rect(0, 0, 0, 20);
+
+            MySearchArea = new SearchArea(MyData.SeachString);
+            MySearchArea.SearchTextIsChange += (s) => { SeachString = s; RefreshFilter(); };
+            FirstLineArea.Content.Add(MySearchArea);
+            SizeFilter = new Filter<int>("Size", DrawTextures[selectedGroup].getTextureList.TextureSizeList);
+            WrapModeFilter = new Filter<TextureWrapMode>("WrapMode", DrawTextures[selectedGroup].getTextureList.TextureWrapMode);
+            SizeFilter.IsToggleChange += RefreshFilter;
+            WrapModeFilter.IsToggleChange += RefreshFilter;
+            // SizeFilter.MyPopupWindowContent.IsToggleChange += SelectTextureWindow.RefreshFilter;
+            WrapModeFilter.IsToggleChange += RefreshFilter;
+
+
+
+
+            FirstLineArea.Content.Add(new FlexibleArea());
+            FirstLineArea.Content.Add(SizeFilter);
+            FirstLineArea.Content.Add(WrapModeFilter);
+
+
+            MyToolbarArea = new ToolbarArea(MyData.Names, MyData.Paths, SelectTextureWindow.selectedGroup);
+            MyToolbarArea.IsListChange += SetDirtyInData;
+            MyToolbarArea.IsListAdd += AddNewDirector;
+            MyToolbarArea.IsListRemoveIndex += SelectTextureWindow.RemoveDataInIndex;
+            MyToolbarArea.IsSelectChange += SelectTextureWindow.RefreshFilter;
+            MyToolbarArea.IsSelectChange += SelectTextureWindow.SetToogleList;
+            TextureArea.Content.Add(MyToolbarArea);
+            TextureArea.Content.Add(_splitView);
+            //  FirstLine.Content.Add(new Filter<int>("Mode",DrawTextures[selectedGroup].getTextureList.TextureSizeList));
+            mainArea.Content.Add(FirstLineArea);
+            mainArea.Content.Add(TextureArea);
+
+
+            // var r =new FirstLineArea(40);
+            //  var r2 =new FirstLineArea(40);
+            //  r2.Content.Add(new SearchArea(MyData.SeachString));
+            //  r.Content.Add(new Filter(new SizeFilterPopupWindow<int>(DrawTextures[selectedGroup].getTextureList.TextureSizeList,50f),"Size") );
+            // mainArea.Content.Add(r);
+            // mainArea.Content.Add(r2);
             // DrawTextures[selectedGroup].Load();
 
 
@@ -198,7 +253,16 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             // isSelect.Clear();
         }
 
+        private static void SetToogleList()
+        {
+            SizeFilter.ToggleTepyList = DrawTextures[MyToolbarArea.selectedIndex].getTextureList.TextureSizeList;
+            WrapModeFilter.ToggleTepyList = DrawTextures[MyToolbarArea.selectedIndex].getTextureList.TextureWrapMode;
+        }
 
+        private void SetDirtyInData()
+        {
+            EditorUtility.SetDirty(MyData);
+        }
 
         private void DrawDragAndDrropRect(Rect obj)
         {
@@ -210,18 +274,73 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
+        /// <summary>
+        /// 贴图单张预览
+        /// </summary>
         public static Texture MaterialTexture;
 
         private void SecondArea(Rect obj)
         {
+            var textRectSize = obj.height - 20;
+            textRectSize = Mathf.Clamp(textRectSize, 50, 200);
+            var textureButtonRect = new Rect(obj.x + 3, obj.y, textRectSize, textRectSize);
+            var textureToolsRect = new Rect(textureButtonRect.xMax + 3, obj.y, 26, obj.height - 20);
+            var toolsMainRect = new Rect(textureToolsRect.xMax - 2, obj.y, obj.width - textureToolsRect.xMax - 50, obj.height - 20);
 
-            var textRectSize = Mathf.Clamp(obj.height, obj.height,200);
-            GUILayout.BeginArea(obj);
-            if (GUILayout.Button(MaterialTexture, GUILayout.Height(textRectSize), GUILayout.Width(textRectSize)))
+            if (GUI.Button(textureButtonRect, MaterialTexture, SelectTextureWindow.skin.customStyles[1]))
             {
                 EditorGUIUtility.PingObject(MaterialTexture);
             }
+            // GUILayout.EndArea();
+
+            int tempValue = -1;
+            GUILayout.BeginArea(textureToolsRect);
+
+            for (int i = 0; i < TextureToolsList.Count; i++)
+            {
+                TextureToolsList[i].MyTexture = MaterialTexture;
+                TextureToolsList[i].Rect = toolsMainRect;
+                TextureToolsList[i].ShowToggle();
+                if (TextureToolsList[i].ToggleValue)
+                {
+                    if (i != tempValue && tempValue != -1)
+                    {
+                        TextureToolsList[tempValue].ToggleValue = false;
+                    }
+                    tempValue = i;
+
+                }
+            };
             GUILayout.EndArea();
+
+            if (tempValue != -1)
+            {
+                GUILayout.BeginArea(toolsMainRect, "", "LODBlackBox");
+                TextureToolsList[tempValue].OnGUI(toolsMainRect);
+                GUILayout.EndArea();
+
+            }
+
+
+            // for (int i = 0; i < TextureToolsList.Count; i++)
+            // {
+            //     if (TextureToolsList[i].ToggleValue)
+            //     {
+            //         GUILayout.BeginArea(toolsMainRect, "", "LODBlackBox");
+
+            //         TextureToolsList[0].OnGUI(toolsMainRect);
+            //         if (i != tempValue && tempValue != -1)
+            //         {
+            //             TextureToolsList[tempValue].ToggleValue = false;
+            //         }
+            //         tempValue = i;
+            //         GUILayout.EndArea();
+            //     }
+            // }
+
+
+
+
             GUILayout.BeginArea(InfoRect);
             {
 
@@ -265,23 +384,34 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
             GUILayout.BeginArea(obj, "", "FrameBox");
 
-            if ((DrawTextures.Count != 0 && !DrawTextures[selectedGroup].IsLoad))
+            if ((DrawTextures.Count != 0 && !DrawTextures[MyToolbarArea.selectedIndex].IsLoad))
             {
-                DrawTextures[selectedGroup].Load();
+                DrawTextures[MyToolbarArea.selectedIndex].Load();
             }
             else if (DrawTextures.Count != 0)
             {
                 // Debug.Log( DrawTextures[selectedGroup].NowTextureBoxs.Count+":"+DrawTextures[selectedGroup].getTextureList.textrueArrayLength) ;
-                DrawTextures[selectedGroup].Draw(new Rect(0, 0, obj.width, obj.height));
+                DrawTextures[MyToolbarArea.selectedIndex].Draw(new Rect(0, 0, obj.width, obj.height));
             }
             GUILayout.EndArea();
         }
 
-        private void GetTextureInfo(TextureBox obj)
+        private void SetTextureInMaterial(TextureBox obj)
         {
             TexturePathInfo = obj.TexturePath;
+            //设置材质球贴图
+            if (IsChangeMaterialTexture)
+            {
+                SetTextureInMaterial(obj.Texture);
+            }
 
+            //贴图单张预览
             MaterialTexture = obj.Texture;
+        }
+        public static void SetTextureInMaterial(Texture2D texture2D)
+        {
+            Undo.RecordObject(SelectTextureWindow.MyData.NowMaterial, "修改材质贴图");//注册可撤销
+            SelectTextureWindow.MyData.NowMaterial.SetTexture(SelectTextureWindow.MyData.NowTextruePropertyName, texture2D);
         }
 
         private void OnReSeletcData()
@@ -292,413 +422,24 @@ namespace YaoZiTools.SelectTextureExtension.Editor
 
         private bool selection;
 
-        private static int selectedGroup = 0;
+        private static int selectedGroup;
 
         private int debug1;
 
         private bool AddDirectoryToggleValue;
 
-        // object ggg;
-
         private void OnGUI()
         {
-            //  GUI.skin =skin;
-            //   var editorType = typeof(EditorWindow);
-            // var m_Parent = editorType.GetField("m_Parent", BindingFlags.Instance | BindingFlags.NonPublic);
-            //  var mEditorWindow = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()).Where(type => type.IsSubclassOf(editorType)).Where(type => type.ToString().Contains("ObjectSelector")).ToList();
-            //  GetWindow(mEditorWindow[0]).Show();
-            // //ccc.Close();
-            // var aaa =mEditorWindow[0].GetField("m_PreviewSize");
-            // //var bbb = aaa.
-            // Debug.Log(aaa.GetValue(m_Parent));
-
-            //Debug.Log(EditorGUIUtility.GetObjectPickerControlID());
-
-            // EditorGUIUtility.ShowObjectPicker<Texture2D>(MyData.NowMaterial,true,"22",0);
-            // EditorGUIUtility.GetObjectPickerObject();
-
-            // Debug.Log(Event.current.commandName);
-
-
-
-
             //图片大小滑动条
-            MyData.TextureSize = (int)GUI.HorizontalSlider(TextureSizeRect, MyData.TextureSize, 50f, 200f);
-            //第一栏黑线
-            GUI.Box(new Rect(0, 0, position.width, 20), "", "ColorPickerBox");
-
-            #region 搜索
-            EditorGUI.BeginChangeCheck();
-            //var sRect = GUILayoutUtility.GetRect(300, 20,GUILayout.ExpandWidth(false));
-            //var sRect =new Rect(0,0,300, 20);
-            SeachString = EditorGUI.TextField(SeachRect, SeachString, new GUIStyle("ToolbarSeachTextField"));
-            if (!string.IsNullOrEmpty(SeachString))
+            if (TextureSizeRect != null)
             {
-                if (GUI.Button(SeachCancelRect, "", "ToolbarSeachCancelButton"))
-                {
-                    SeachString = "";
-                }
+                MyData.TextureSize = (int)GUI.HorizontalSlider(TextureSizeRect, MyData.TextureSize, 50f, 200f);
             }
 
-            // SeachString = GUILayout.TextField(SeachString, "ToolbarSeachTextField");
-            IsTextFieldChange = false;
-            if (EditorGUI.EndChangeCheck())
-            {
-                IsTextFieldChange = true;
-                RefreshFilter();
-
-                if (!string.IsNullOrEmpty(SeachString))
-                {
-                    sw.Start();
-                }
-                else
-                {
-                    sw.Stop();
-                    sw.Reset();
-                }
-
-            }
-            //搜索历史
-            if (sw.Elapsed >= TimeSpan.FromSeconds(2.0) && !string.IsNullOrEmpty(SeachString))
-            {
-                AddSeachList(SeachString);
-                //MyData.SeachString.Add(SeachString);
-                sw.Stop();
-                sw.Reset();
-            }
-            GUILayout.BeginArea(SeachStringsRect);
-            GUILayout.BeginHorizontal();
-            for (int i = 0; i < MyData.SeachString.Count; i++)
-            {
-                if (GUILayout.Button(MyData.SeachString[i], "sv_label_" + i % 7, GUILayout.MaxWidth(40)))
-                {
-                    SeachString = MyData.SeachString[i];
-                    IsTextFieldChange = true;
-                    RefreshFilter();
-                }
-
-                if (GUILayout.Button("", "ToolbarSeachCancelButton", GUILayout.Width(10)))
-                {
-                    MyData.SeachString.RemoveAt(i);
-                }
-            }
-
-            // IsSort = GUILayout.Toggle(IsSort, SortIcon, "IconButton", GUILayout.Width(20));
-            // if (IsSort)
-            // {
-            //     ReadFileInfo(DrawTextures[selectedGroup]);
-            // }
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndArea();
-
-            #endregion
-
-
-            // var dRecta = new Rect(5, 20, position.width - 50, 20);
-            // dRecta.MinWidth(30*MyData.Names.Count);
-            var e = Event.current;
-
-            #region 文件夹栏
-            GUILayout.BeginArea(DirectoryRect);
-            GUILayout.BeginHorizontal();
-            EditorGUI.BeginChangeCheck();
-            GUI.enabled = IsToolbarEnabled;
-            selectedGroup = GUILayout.Toolbar(selectedGroup, MyData.Names.ToArray(), EditorStyles.toolbarButton,
-                GUILayout.ExpandWidth(false), GUILayout.MaxWidth(100 * MyData.Names.Count),
-                GUILayout.MinWidth(40 * MyData.Names.Count));
-            if (Event.current.type == EventType.Repaint)
-            {
-                ToolbarRect = GUILayoutUtility.GetLastRect();
-            }
-
-            GUI.enabled = true;
-
-            //  ToolbarRects=  ToolbarRect.Split(Names.Count,RectExtension.SplitType.Horizontal); //不好
-
-
-            AddDirectoryToggleValue = GUILayout.Toggle(AddDirectoryToggleValue,
-                EditorGUIUtility.IconContent("d_CreateAddNew"), EditorStyles.toolbarButton, GUILayout.Width(20));
-
-            if (foldeField.IsGetPath)
-            {
-                if (GUILayout.Button("Save", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
-                {
-                    AddDirectoryToggleValue = false;
-                    foldeField.IsGetPath = false;
-                    SaveDataInAsset(foldeField.Path);
-                }
-            }
-
-            if (AddDirectoryToggleValue)
-            {
-                foldeField.OnGUI(AddDirectoryRect);
-            }
-
-            var addRect = GUILayoutUtility.GetRect(20, 200, 20, 20, GUILayout.ExpandWidth(false));
-
-            if (Event.current.type == EventType.Repaint)
-            {
-                AddDirectoryRect = addRect;
-            }
-            if (EditorGUI.EndChangeCheck())//增加删除，或者切换 都刷新筛选
-            {
-                RefreshFilter();
-                //DrawTextures[selectedGroup].Load();//继续加载没加载的
-            }
-            //EditorGUI.BeginChangeCheck();
-
-            //获取删除文件夹按钮的位置
-            ToolbarRects = ToolbarRect.Split(MyData.Names.Count, RectExtension.SplitType.Horizontal);
-            ToolbarClosRects = new Rect[ToolbarRects.Length];
-            for (int i = 0; i < ToolbarRects.Length; i++)
-            {
-                ToolbarClosRects[i] = ToolbarRects[i];
-                ToolbarClosRects[i].x = ToolbarRects[i].xMax - 20;
-                ToolbarClosRects[i].height = 20;
-                ToolbarClosRects[i].width = 20;
-            }
-
-
-            for (int i = 0; i < MyData.Names.Count; i++)
-            {
-                Undo.RecordObject(MyData, "改名");
-                if ((ToolbarRect.Contains(e.mousePosition) && e.clickCount == 2) || !IsToolbarEnabled) //双击出现
-                {
-                    GUILayout.BeginArea(ToolbarRects[i]);
-                    GUILayout.BeginHorizontal();
-                    MyData.Names[i] = EditorGUILayout.DelayedTextField(MyData.Names[i]);
-
-                    //MyData.Names[i] = Names[i];
-                    // Debug.Log("hh");
-                    IsToolbarEnabled = false;
-                    if (GUILayout.Button("", //删除文件夹按钮
-                            "WinBtnClose"))
-                    {
-                        //Undo.RecordObject(MyData,"数据");
-                        RemoveDataInIndex(i);
-                        if (selectedGroup != 0) //不是删除第一个，选中就-1
-                        {
-                            selectedGroup--;
-                        }
-                    }
-
-                    GUILayout.EndHorizontal();
-                    GUILayout.EndArea();
-                }
-            }
-
-            if (!(ToolbarRect.Contains(e.mousePosition)) && e.clickCount == 1)
-            {
-                IsToolbarEnabled = true;
-            }
-
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
-
-            #endregion
-
-
-
-
-
-            #region 材质属性
-
-            // var MaterialPropertyRect =
-            //     new Rect(tRecta.width + 5, tRecta.y + 5, position.width - tRecta.width, tRecta.height);
-            // GUILayout.BeginArea(MaterialPropertyRect);
-
-
-            // GUILayout.BeginVertical();
-
-            // EditorGUILayout.ObjectField(MyData.NowMaterial, typeof(Material));
-            // IsSelectTexture[MyData.NowTextruePropertyName] = true; //now 永远都是选中状态
-            // for (int i = 0; i < TexturPropertyNames.Count; i++)
-            // {
-            //     IsSelectTexture[TexturPropertyNames[i]] = GUILayout.Toggle(IsSelectTexture[TexturPropertyNames[i]],
-            //         MyData.NowMaterial.GetTexture(TexturPropertyNames[i]), PropertyButtonStyle);
-            //     if (IsSelectTexture[TexturPropertyNames[i]])
-            //     {
-            //         IsSelectTexture[MyData.NowTextruePropertyName] = false; //先将之前的选中取消
-            //         MyData.NowTextruePropertyName = TexturPropertyNames[i]; //将选中的名字赋值给now
-            //     }
-            // }
-
-            // GUILayout.EndVertical();
-            // GUILayout.EndArea();
-
-            #endregion
-
-            #region 筛选栏
-
-            var shaixuanRect = new Rect(position.width - 190, 0, 190, 20);
-            //var shaixuanRect = GUILayoutUtility.GetRect(position.width, 20);
-            var refreshButtonRect = new Rect(position.width - 30, 0, 30, 20);
-            // ButtonRect.x = shaixuanRect.xMax - 28;
-            // ButtonRect.width = 30;
-            if (GUI.Button(refreshButtonRect, EditorGUIUtility.IconContent("d_Refresh"), "AppToolbarButtonLeft"))//重置筛选条件
-            {
-                SetSizeSelectIsFasle();
-                //SizeFilterPopupWindow.IsAllIsFalse = true;
-                // ModeFilterPopupWindow.IsAllIsFalse = true;
-                RefreshFilter();
-
-
-            }
-
-            var SizeToggleRect = refreshButtonRect;
-            SizeToggleRect.width = 80;
-            SizeToggleRect.x = refreshButtonRect.x - SizeToggleRect.width - 2;
-
-            var wrapModeToggleRect = SizeToggleRect;
-            wrapModeToggleRect.width = 80;
-            wrapModeToggleRect.x = SizeToggleRect.x - wrapModeToggleRect.width - 2;
-
-
-            SizeToggleValue = GUI.Toggle(SizeToggleRect, false, "MaxSize", "ToolbarDropDownToggle");
-            if (SizeToggleValue)
-            {
-                PopupWindow.Show(SizeToggleRect, new SizeFilterPopupWindow<int>(DrawTextures[selectedGroup].getTextureList.TextureSize, SizeToggleRect.width));
-            }
-
-            wrapModeToggleValue = GUI.Toggle(wrapModeToggleRect, false, "Mode", "ToolbarDropDownToggle");
-            if (wrapModeToggleValue)
-            {
-                // PopupWindow.Show(wrapModeToggleRect, new ModeFilterPopupWindow()
-                // {
-                //     mRectX = wrapModeToggleRect.width,
-                //     TextureWrapMode = DrawTextures[selectedGroup].getTextureList.TextureWrapMode,
-                // });
-                PopupWindow.Show(wrapModeToggleRect, new SizeFilterPopupWindow<TextureWrapMode>(DrawTextures[selectedGroup].getTextureList.TextureWrapMode, wrapModeToggleRect.width));
-            }
-
-            // EditorGUI.DropdownButton(SizeToggleRect, new GUIContent("啥啊"), FocusType.Keyboard);
-            // EditorGUI.DrawRect(SizeToggleRect,Color.cyan);
-
-            #endregion
-
-            #region 排序
-            //  if (GUI.Button(sortRect,SortIcon,"TimeScrubberButton"))
-            //  {
-            //     // TextureSort(DrawTextures[selectedGroup]);
-            //      RefreshFilter();
-            //  }
-            EditorGUI.BeginChangeCheck();
-            IsSort = GUI.Toggle(sortRect, IsSort, SortIcon, "RL FooterButton");
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                RefreshFilter();
-            }
-            if (IsSort)
-            {
-                GUI.Label(sortTipsRect, "修改时间", "MeTimeLabel");
-            }
-            else
-            {
-                GUI.Label(sortTipsRect, "默认排序", "MeTimeLabel");
-            }
-
-            #endregion
-
-            #region 三个按钮
-            // var toolRect = new Rect(5, 40, position.width, 20);
-            // TextureSizeTool.Draw(toolRect);
-            #endregion
-            #region 贴图区域
-
-
-
-            // tRecta.MinHeight(MyData.TextureSize);
-            // tRecta.MinWidth(MyData.TextureSize);
-            // var texRect = GUILayoutUtility.GetRect(MyData.TextureSize, position.width, MyData.TextureSize,
-            //         position.height); //贴图区域
-            // GUILayout.BeginArea(tRecta, "", "FrameBox");
-            //  DrawTextures[selectedGroup].getTextureList.textrueArrayLength
-
-            // if ((DrawTextures.Count != 0 && !DrawTextures[selectedGroup].IsLoad))
-            // {
-            //     DrawTextures[selectedGroup].Load();
-            // }
-            // else if (DrawTextures.Count != 0)
-            // {
-            //     // Debug.Log( DrawTextures[selectedGroup].NowTextureBoxs.Count+":"+DrawTextures[selectedGroup].getTextureList.textrueArrayLength) ;
-            //     DrawTextures[selectedGroup].Draw(new Rect(0, 0, tRecta.width, tRecta.height));
-            // }
-
-            // DrawTextures[selectedGroup].Draw(tRecta);    
-
-
-            // if (DrawTextures[selectedGroup].Equals(null))
-            // {
-            //   DrawTextures.Insert(selectedGroup,new DrawTextureGroup(MyData.Paths[selectedGroup])
-            //         {
-            //             SelectIsSizType = mTextureGroupBox.SelectIsTextureSizeType,
-            //             SelectIsTextureWrapMode = mTextureGroupBox.SelectIsTextureWrapMode
-            //         });
-            // }
-            // else
-            // {
-            //    DrawTextures[selectedGroup].Draw(tRecta); 
-            // }
-
-
-
-            // GUILayout.EndArea();
-
-            #endregion
-            #region 底部信息栏
-
-            //var InfoArea = GUILayoutUtility.GetRect(position.width, 20);
-
-            // if (Event.current.type == EventType.Repaint)
-            // {
-            //     //infoAreaRect = InfoArea;
-            // }
-
-            // GUILayout.BeginArea(InfoRect);
-            // {
-            //     GUILayout.BeginHorizontal();
-            //     {
-            //         GUILayout.Label(TexturePathInfo, "PR DisabledLabel");
-            //         if (!string.IsNullOrEmpty(TexturePathInfo))
-            //         {
-            //             if (GUILayout.Button("ping", "AssetLabel Partial"))
-            //             {
-            //                 EditorGUIUtility.PingObject(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-            //             }
-
-            //             if (GUILayout.Button("open", "AssetLabel Partial"))
-            //             {
-            //                 //EditorGUIUtility.PingObject(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-            //                 AssetDatabase.OpenAsset(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-            //             }
-            //             if (GUILayout.Button("Save", "AssetLabel Partial"))
-            //             {
-            //                 //EditorGUIUtility.PingObject(MyData.NowMaterial.GetTexture(MyData.NowTextruePropertyName));
-            //                 SaveTextureInAssets(DrawTextures[selectedGroup].NowTextureBoxs[DrawTextures[selectedGroup].SelectIndex]);
-            //             }
-            //         }
-
-
-            //     }
-            //     GUILayout.EndHorizontal();
-            // }
-            // GUILayout.EndArea();
-            // if (DrawTextures != null && DrawTextures[selectedGroup].NowTextureBoxs != null)
-            // {
-            //     GUI.Label(textureNumRect, DrawTextures[selectedGroup].NowTextureBoxs.Count.ToString(), "MeTimeLabel");//显示图片数量
-            // }
-            // //当前材质球
-            // EditorGUI.ObjectField(MaterailRect, MyData.NowMaterial, typeof(Material), true);
-
-
-            #endregion
-
-
-            _splitView.OnGUI(tRecta);
-
+            //第一行
+            FirstLineArea.OnGUI(new Rect(0, 0, position.width, 20));
+            //贴图区域 包含Toolbar
+            TextureArea.OnGUI(new Rect(0, 20, position.width, position.height - 20));
             Repaint();
         }
 
@@ -740,18 +481,17 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 MyData = AssetDatabase.LoadAssetAtPath<SelectTextureWindowData>(Data.GetDataPath() + "/SelectTextureWindowData.asset");
             }
-
+            if (_splitView == null)
+            {
+                _splitView = new SplitView(SplitType.Vertical, AutoFillRect.SecondRect);
+            }
             if (Material != null)
             {
                 MyData.NowMaterial = Material;
             }
-            if (PropertyName != null)
+            if (PropertyName != null) 
             {
                 MyData.NowTextruePropertyName = PropertyName;
-            }
-            if (_splitView == null)
-            {
-                _splitView = new SplitView(SplitType.Vertical);
             }
             SplitView.SplitSize = MyData.SplitSize;
 
@@ -765,7 +505,16 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 TexturePathInfo = AssetDatabase.GetAssetPath(MaterialTexture);
             }
 
+            var types = TypeCache.GetTypesDerivedFrom<TextureTools>();
+            if (types.Count != TextureToolsList.Count)
+            {
+                TextureToolsList.Clear();
+                for (int i = 0; i < types.Count; i++)
+                {
+                    TextureToolsList.Add(Activator.CreateInstance(types[i]) as TextureTools);
 
+                }
+            }
 
         }
 
@@ -815,6 +564,10 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             MyData.Names.RemoveAt(index);
             EditorUtility.SetDirty(MyData);//设置为脏 ctrl+s就会保存
             DrawTextures.RemoveAt(index);
+            if (MyToolbarArea.selectedIndex != 0) //不是删除第一个，选中就-1
+            {
+                MyToolbarArea.selectedIndex--;
+            }
         }
         public static void SaveData()
         {
@@ -843,12 +596,21 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         private void OnDisable()
         {
             //DrawTextures.Clear();
-            DrawTextureGroup.TextrueChange -= GetTextureInfo;
+            DrawTextureGroup.IsTextureChange -= SetTextureInMaterial;
 
             SelectTextureCustomMaterialInspector.ButtomEvent -= OnReSeletcData;
             _splitView.FirstArea -= FirstArea;
             _splitView.SecondArea -= SecondArea;
             _splitView.DrawDragAndDrropRect -= DrawDragAndDrropRect;
+            SizeFilter.IsToggleChange -= RefreshFilter;
+            WrapModeFilter.IsToggleChange -= RefreshFilter;
+            MyToolbarArea.IsListAdd -= AddNewDirector;
+
+            MyToolbarArea.IsListChange -= SetDirtyInData;
+            MyToolbarArea.IsListRemoveIndex -= SelectTextureWindow.RemoveDataInIndex;
+            MyToolbarArea.IsSelectChange -= SelectTextureWindow.RefreshFilter;
+
+            WrapModeFilter.IsToggleChange -= RefreshFilter;
 
             MyData.SplitSize = SplitView.SplitSize;
             EditorUtility.SetDirty(MyData);
@@ -860,13 +622,13 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             // {
             //     return;
             // }
-            DrawTextures[selectedGroup].NowTextureBoxs = DrawTextures[selectedGroup].getTextureList.TextureBoxs;
-            TextureSizeFilter(DrawTextures[selectedGroup]);
-            TextureWrapModesFilter(DrawTextures[selectedGroup]);
-            TextureSearchFilter(DrawTextures[selectedGroup]);
+            DrawTextures[MyToolbarArea.selectedIndex].NowTextureBoxs = DrawTextures[MyToolbarArea.selectedIndex].getTextureList.TextureBoxs;
+            TextureSizeFilter(DrawTextures[MyToolbarArea.selectedIndex]);
+            TextureWrapModesFilter(DrawTextures[MyToolbarArea.selectedIndex]);
+            TextureSearchFilter(DrawTextures[MyToolbarArea.selectedIndex]);
             if (IsSort)
             {
-                TextureSort(DrawTextures[selectedGroup]);
+                TextureSort(DrawTextures[MyToolbarArea.selectedIndex]);
             }
         }
         public static void RefreshFilter(ref List<TextureBox> textureBoxs)
@@ -897,7 +659,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 : drawTextureGroup.NowTextureBoxs.Where((boxs =>
                 {
                     return SizeFilterPopupWindow<int>.PropetrtySelect[
-                        boxs.Texture.height > boxs.Texture.width ? boxs.Texture.height : boxs.Texture.width];
+                        boxs.MaxSize];
                 })).ToList();
         }
         public static void TextureWrapModesFilter(DrawTextureGroup drawTextureGroup)
@@ -939,8 +701,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public static void SetSizeSelectIsFasle()
         {
             // for (int i = 0; i < MyData.TextureSizeTypes.Count; i++)
-            SizeFilterPopupWindow<int>.IsAllIsFalse=true;
-            SizeFilterPopupWindow<TextureWrapMode>.IsAllIsFalse=true;
+            SizeFilterPopupWindow<int>.IsAllIsFalse = true;
+            SizeFilterPopupWindow<TextureWrapMode>.IsAllIsFalse = true;
             // {
             //     MyData.TextureSizeTypes[MyData.TextureSizeTypes.Keys.ToArray()[i]] = false;
             // }
@@ -949,16 +711,20 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         {
 
             var texture = textureBoxs.Texture.EncodeToPNG();
-
             var p = textureBoxs.TexturePath.Replace("\\", "/");
             p = Path.GetFileName(p);
             p = AssetDatabase.GenerateUniqueAssetPath("Assets/TempTexture/" + p);
             var fullPatn = Path.GetFullPath(p);
-            File.WriteAllBytes(fullPatn, texture);
-            //AssetDatabase.CreateAsset(texture, p);
 
-            AssetDatabase.Refresh();
+            SaveTextureInAssets(textureBoxs.Texture, fullPatn);
+
             SelectTextureWindow.MyData.NowMaterial.SetTexture(MyData.NowTextruePropertyName, AssetDatabase.LoadAssetAtPath<Texture2D>(p));
+        }
+        public static void SaveTextureInAssets(Texture2D texture2D, string path)
+        {
+            var texture = texture2D.EncodeToPNG();
+            File.WriteAllBytes(path, texture);
+            AssetDatabase.Refresh();
         }
     }
 }
