@@ -106,11 +106,11 @@ public class GetTextureList
                     texture.LoadImage(b);
                 }
             }
-            var tempTextureBox =new TextureBox(texture, new FileInfo(tempPath).LastWriteTime, tempPath);
+            var tempTextureBox = new TextureBox(texture, new FileInfo(tempPath).LastWriteTime, tempPath);
 
             TextureBoxs.Add(tempTextureBox);
 
-           // var maxSize = texture.width > texture.height ? texture.width : texture.height;
+            // var maxSize = texture.width > texture.height ? texture.width : texture.height;
             if (!TextureWrapMode.Contains(texture.wrapMode))
             {
                 TextureWrapMode.Add(texture.wrapMode); //收集贴图组的模式表
@@ -137,7 +137,7 @@ public class GetTextureList
                 }
             }
 
-            /* 
+            /*
              if (SelectTextureWindow.MyData.TextureSizeTypes == null)
              {
                  SelectTextureWindow.MyData.TextureSizeTypes = new Dictionary<int, bool>();

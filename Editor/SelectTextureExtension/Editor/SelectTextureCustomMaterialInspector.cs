@@ -24,6 +24,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public static event Action ButtomEvent;
         private ShaderGUI ShaderGUI = Activator.CreateInstance(typeof(CustomShaderGUI)) as ShaderGUI;
         public static FieldInfo MyCustomShaderGUI;
+        static GUIStyle MyGUIStyle;
         private bool IsShaderChange;
         [InitializeOnLoadMethod]
         private static void GetShaderGUI()
@@ -34,6 +35,8 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public override void OnEnable()
         {
             base.OnEnable();
+            MyGUIStyle = new GUIStyle("Wizard Box");
+            MyGUIStyle.alignment = TextAnchor.MiddleCenter;
 
             Material = target as Material;
             // base.PropertiesDefaultGUI(new MaterialProperty[]{new MaterialProperty(){textureValue = SelectTextureWindow.MyData.NowMaterial.GetTexture(SelectTextureWindow.MyData.NowTextruePropertyName)}});
@@ -77,14 +80,14 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             }
             if (TexturNames != null && (IsCustomShaderGUI || !this.isVisible))
             {
-                Debug.Log(this.customShaderGUI);
+                // Debug.Log(this.customShaderGUI);
                 GUILayout.BeginVertical();
                 for (int i = 0; i < TexturNames.Count; i++)
                 {
                     // Texture2Ds[i] = EditorGUILayout.ObjectField(TexturNames[i] ,Texture2Ds[i], typeof(Texture2D),false) as Texture2D;
                     GUILayout.BeginHorizontal("box");
                     GUILayout.Label(TexturDescription[i] + ":");
-                    if (GUILayout.Button(Material.GetTexture(TexturNames[i]), "Wizard Box", GUILayout.Width(70), GUILayout.Height(70)))
+                    if (GUILayout.Button(Material.GetTexture(TexturNames[i]), MyGUIStyle, GUILayout.Width(70), GUILayout.Height(70)))
                     {
 
                         SelectTextureWindow.PropertyName = TexturNames[i];

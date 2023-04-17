@@ -120,13 +120,15 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         public static void Open()
         {
             LoadData();
-            GetWindow<SelectTextureWindow>().Show();
+           var go= GetWindow<SelectTextureWindow>();
+           go.minSize=new Vector2(500,500);
+           go.Show();
         }
 
         private void OnEnable()
         {
-          //  LoadData();
-         //   Debug.Log("加载");
+            //  LoadData();
+            //   Debug.Log("加载");
 
             skin = Resources.Load<GUISkin>("mySkin");
             //  kuang = AssetDatabase.LoadAssetAtPath<Texture>("Assets/YaoZiTools/SelectTextureExtension/kuang.png");
@@ -203,10 +205,13 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             TextureArea = new MainArea(MainArea.Arrangement.Vertical, "box");
             FirstLineArea.Rect = new Rect(0, 0, 0, 20);
 
-            MySearchArea = new SearchArea(MyData.SeachString);
+            MySearchArea = new SearchArea();
+            MySearchArea.SearchHistory = MyData.SeachString;
             MySearchArea.SearchTextIsChange += (s) => { SeachString = s; RefreshFilter(); };
             FirstLineArea.Content.Add(MySearchArea);
-            SizeFilter = new Filter<int>("Size", DrawTextures[selectedGroup].getTextureList.TextureSizeList);
+            SizeFilter = new Filter<int>();
+            SizeFilter.Label = "Size";
+            SizeFilter.ToggleTepyList = DrawTextures[selectedGroup].getTextureList.TextureSizeList;
             WrapModeFilter = new Filter<TextureWrapMode>("WrapMode", DrawTextures[selectedGroup].getTextureList.TextureWrapMode);
             SizeFilter.IsToggleChange += RefreshFilter;
             WrapModeFilter.IsToggleChange += RefreshFilter;
@@ -489,7 +494,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 MyData.NowMaterial = Material;
             }
-            if (PropertyName != null) 
+            if (PropertyName != null)
             {
                 MyData.NowTextruePropertyName = PropertyName;
             }
@@ -504,7 +509,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             {
                 TexturePathInfo = AssetDatabase.GetAssetPath(MaterialTexture);
             }
-
+            //加载插件
             var types = TypeCache.GetTypesDerivedFrom<TextureTools>();
             if (types.Count != TextureToolsList.Count)
             {
@@ -558,8 +563,12 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         }
 
         public static void RemoveDataInIndex(int index)
-
         {
+            //限制最少有一个
+            if (MyData.Names.Count == 1)
+            {
+                return;
+            }
             MyData.Paths.RemoveAt(index);
             MyData.Names.RemoveAt(index);
             EditorUtility.SetDirty(MyData);//设置为脏 ctrl+s就会保存

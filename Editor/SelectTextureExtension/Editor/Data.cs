@@ -46,6 +46,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             data.Names.Add("Assets");
             data.Paths.Add("Assets");
             data.WindowBackgroundColor = new Color(0, 0, 0, 0);
+            data.SplitSize = 150;
 
             AssetDatabase.CreateAsset(data, dataPath + "/SelectTextureWindowData.asset");
             AssetDatabase.Refresh(); //刷新
