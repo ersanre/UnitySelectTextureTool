@@ -4,11 +4,8 @@ Editor/SelectTextureExtension/Common/
 *.unity
 Test/
 Test
-<<<<<<< HEAD
 Editor/CopyMaterialExtension
-=======
->>>>>>> Bate_CustomShaderGUI
 Editor/CopyMaterialTool
-*.assset
+*.asset
 Editor/.gitignore
 Editor/README.md
