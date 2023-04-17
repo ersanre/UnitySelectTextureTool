@@ -22,6 +22,11 @@ namespace EditorFramework
             Vertical,
             Horizontal
         }
+        public enum AutoFillRect
+        {
+            firstRect,
+            SecondRect
+        }
 
         /// <summary>
         /// 以某个点为中心缩放rect块
@@ -35,10 +40,10 @@ namespace EditorFramework
             switch (anchorType)
             {
                 case AnchorType.MiddleCenter:
-                    r = self.CutLeft(-pixel * 0.5f)
-                        .CutRigth(-pixel * 0.5f)
-                        .CutTop(-pixel * 0.5f)
-                        .CutBottom(-pixel * 0.5f);
+                    r = self.CutLeft((-pixel) * 0.5f)
+                        .CutRigth((-pixel) * 0.5f)
+                        .CutTop((-pixel) * 0.5f)
+                        .CutBottom((-pixel) * 0.5f);
 
                     break;
             }
@@ -55,11 +60,11 @@ namespace EditorFramework
         {
             if (splitType == SplitType.Vertical)
             {
-                return new Rect(rects[0].xMax, rects[0].yMin, rects[1].xMin - rects[0].xMax, rects[0].height);
+                return new Rect(rects[0].xMin, rects[0].yMax, rects[0].width, rects[1].yMin - rects[0].yMax);
             }
             else
             {
-                return new Rect(rects[0].xMin, rects[0].yMax, rects[0].width, rects[1].yMin - rects[0].yMax);
+                return new Rect(rects[0].xMax, rects[0].yMin, rects[1].xMin - rects[0].xMax, rects[0].height);
             }
         }
 
@@ -73,11 +78,11 @@ namespace EditorFramework
         /// <param name="justMid"></param>居中
         /// <returns></returns>两个rect块
         public static Rect[] Split(this Rect self, SplitType splitType, float size, float padding = 0,
-            bool justMid = true)
+            bool justMid = true, AutoFillRect autoFillRect = AutoFillRect.firstRect)
         {
             if (splitType == SplitType.Vertical)
             {
-                return VerticalSplit(self, size, padding, justMid);
+                return VerticalSplit(self, size, padding, justMid, autoFillRect);
             }
             else
             {
@@ -124,18 +129,14 @@ namespace EditorFramework
         /// <param name="padding"></param>两个块之间的间隙
         /// <param name="justMid"></param>是否居中
         /// <returns></returns>返回两个块
-        public static Rect[] VerticalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
+        public static Rect[] HorizontalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
         {
             if (justMid)
             {
                 return new Rect[2]
                 {
-                    //??
-                    //self.CutRigth(self.width-width).CutRigth(padding).CutRigth(Mathf.CeilToInt(padding/2f)),
-                    // self.CutLeft(width).CutLeft(padding).CutLeft(-Mathf.CeilToInt(padding/2f))
                     self.CutRigth(self.width - size + padding * 0.5f),
                     self.CutLeft(size + padding * 0.5f),
-                    //new Rect(width-padding*0.5f,self.y,padding,self.height)
                 };
             }
 
@@ -154,19 +155,26 @@ namespace EditorFramework
         /// <param name="padding"></param>两个块之间的间隙
         /// <param name="justMid"></param>是否居中
         /// <returns></returns>返回两个块
-        public static Rect[] HorizontalSplit(this Rect self, float size, float padding = 0, bool justMid = true)
+        public static Rect[] VerticalSplit(this Rect self, float size, float padding = 0, bool justMid = true, AutoFillRect autoFillRect = AutoFillRect.firstRect)
         {
             if (justMid)
             {
-                return new Rect[2]
+                if (autoFillRect == AutoFillRect.SecondRect)
                 {
-                    //??
-                    //self.CutRigth(self.width-width).CutRigth(padding).CutRigth(Mathf.CeilToInt(padding/2f)),
-                    // self.CutLeft(width).CutLeft(padding).CutLeft(-Mathf.CeilToInt(padding/2f))
+                    return new Rect[2]
+                                        {
+                    self.CutBottom(size + padding * 0.5f),
+                    self.CutTop(self.height - size + padding * 0.5f),
+                                        };
+                }
+                else
+                {
+                    return new Rect[2]
+                    {
                     self.CutBottom(self.height - size + padding * 0.5f),
                     self.CutTop(size + padding * 0.5f),
-                    //new Rect(width-padding*0.5f,self.y,padding,self.height)
-                };
+                    };
+                }
             }
 
             return new Rect[2]

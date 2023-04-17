@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.EditorFramework.Editor
+namespace EditorFramework.Editor
 {
     public abstract class GUIBase : IDisposable
     {
         protected bool mDisposed { get; private set; }
-        protected Rect mPosition { get;  set; }
+        protected Rect mPosition { get; set; }
+        public virtual Rect Rect { get { return this.mPosition; } set { this.mPosition = value; } }
 
         public virtual void Dispose()
         {
@@ -23,4 +24,5 @@ namespace Assets.EditorFramework.Editor
 
         protected abstract void OnDispose();
     }
+
 }

@@ -11,7 +11,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
     public class SizeFilterPopupWindow<T> : PopupWindowContent
     {
         private float mRectX;
-
+        public event Action IsToggleChange;
         public static bool IsAllIsFalse
         {
             set
@@ -19,6 +19,7 @@ namespace YaoZiTools.SelectTextureExtension.Editor
                 if (value)
                 {
                     PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => false);
+                    // SelectTextureWindow.RefreshFilter();
                 }
 
             }
@@ -26,7 +27,15 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         }
 
         public List<T> Property = new List<T>();
-        public static Dictionary<T, bool> PropetrtySelect = new Dictionary<T, bool>();
+
+        private static Dictionary<T, bool> _propetrtySelect = new Dictionary<T, bool>();
+        public static Dictionary<T, bool> PropetrtySelect
+        {
+            get { return _propetrtySelect; }
+            private set { _propetrtySelect = value; }
+        }
+        private T TempValue;
+        public bool MultipleSelect;
 
         public override void OnGUI(Rect rect)
         {
@@ -34,17 +43,23 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             GUILayout.BeginVertical();
             for (int i = 0; i < Property.Count; i++)
             {
-
                 PropetrtySelect[Property[i]] = GUILayout.Toggle(PropetrtySelect[Property[i]], Property[i].ToString());
+                if (PropetrtySelect[Property[i]] && MultipleSelect)
+                {
+                    if (!Property[i].Equals(TempValue) && TempValue != null)
+                    {
 
+                        PropetrtySelect[TempValue] = false;
+                    }
+                    TempValue = Property[i];
+                }
             }
-
             // SelectTextureWindow.MyData.TextureSizeTypes.Values.All(p => p);
 
             GUILayout.EndVertical();
             if (EditorGUI.EndChangeCheck())
             {
-                SelectTextureWindow.RefreshFilter();//刷新筛选
+                IsToggleChange?.Invoke();
             }
 
         }
@@ -53,8 +68,11 @@ namespace YaoZiTools.SelectTextureExtension.Editor
         /// </summary>
         /// <param name="t">显示的内容list表</param>
         /// <param name="windowWidht">窗口的宽度</param>
-        public SizeFilterPopupWindow(List<T> t, float windowWidht)
+        /// <param name="multipleSelect">是否支持多选</param>
+        public SizeFilterPopupWindow(List<T> t, float windowWidht, bool multipleSelect = false)
         {
+            // PropetrtySelect = new Dictionary<T, bool>();
+            MultipleSelect = multipleSelect;
             mRectX = windowWidht;
             Property = t;
             for (int i = 0; i < t.Count; i++)
@@ -70,28 +88,33 @@ namespace YaoZiTools.SelectTextureExtension.Editor
             PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => t.Contains(v.Key) ? v.Value : false);
 
         }
-
         public override Vector2 GetWindowSize()
         {
             return new Vector2(mRectX, Property.Count * 17 + 5);
         }
-        public static void SetPropertySelect(T Key, bool value)
-        {
-            PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key) ? value : v.Value);
-            SelectTextureWindow.RefreshFilter();//不要每次都刷
-        }
-        public static void SetPropertySelect(List<T> Key, bool value)
+        // public static void SetPropertySelect(T Key, bool value)
+        // {
+        //     PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key) ? value : v.Value);
+        //     SelectTextureWindow.RefreshFilter();//不要每次都刷
+        // }
+        /// <summary>
+        /// 设置toggle组的选项
+        /// </summary>
+        /// <param name="Key"></param>
+        /// <param name="value"></param>
+        public void SetPropertySelect(List<T> Key, bool value)
         {
             for (int i = 0; i < Key.Count; i++)
             {
-                SetPropertySelect(Key[i],value);
+                PropetrtySelect = PropetrtySelect.ToDictionary(k => k.Key, v => v.Key.Equals(Key[i]) ? value : v.Value);
             }
+            IsToggleChange?.Invoke();
         }
-        // public static void SetPropertySelect(Func<List<T>,List<T>> func, bool value)
-        // {
-        //    var keys = func(SizeFilterPopupWindow<T>.Property);
-        //    SetPropertySelect(keys,value);
-        // }
+        public void SetPropertySelect(Func<List<T>, List<T>> func, bool value)
+        {
+            var keys = func(Property);
+            SetPropertySelect(keys, value);
+        }
 
     }
 }

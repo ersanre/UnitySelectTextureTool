@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class CustomMaterialPropertyDrawer : MaterialPropertyDrawer
 {
+   
     float height;
     public override void OnGUI(Rect position, MaterialProperty prop, string label, MaterialEditor editor)
     {
